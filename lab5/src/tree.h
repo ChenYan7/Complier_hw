@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "type.h"
 
+int NodeID = 0;
 enum NodeType
 {
     NODE_CONST, 
@@ -17,12 +18,37 @@ enum NodeType
 
 enum OperatorType
 {
+    //关系运算
     OP_EQ,  // ==
+    OP_GT,  // >
+    OP_LT,  // <
+    OP_GQT, // >=
+    OP_LQT, // <=
+    OP_NEQ, // !=
+
+    //算术运算符
+    OP_ADD,
+    OP_SUB,
+    OP_MUL,
+    OP_DIV,
+    OP_MOD, // %
+
+    //逻辑运算符
+    OP_AND,
+    OP_OR,
+    OP_NOT,
 };
 
 enum StmtType {
     STMT_SKIP,
     STMT_DECL,
+    STMT_ASSIGN,
+    STMT_IF,
+    STMT_WHILE,
+    STMT_FOR,
+    STMT_RETURN,
+    STMT_SCANF,
+    STMT_PRINTF,
 }
 ;
 
@@ -32,8 +58,11 @@ public:
     int lineno;
     NodeType nodeType;
 
-    TreeNode* child = nullptr;
-    TreeNode* sibling = nullptr;
+    TreeNode* child[20];
+    TreeNode* sibling[20];
+
+    int child_num;
+    int sibling_num;
 
     void addChild(TreeNode*);
     void addSibling(TreeNode*);
@@ -63,5 +92,6 @@ public:
 public:
     TreeNode(int lineno, NodeType type);
 };
+
 
 #endif

@@ -29,6 +29,15 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 ";" return  SEMICOLON;
 
+"+" return ADD;
+"-" return SUB;
+"*" return MUL;
+"/" return DIV;
+"(" return LP;
+")" return RP;
+"{" return LC;
+"}" return RC;
+
 {INTEGER} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_INT;

@@ -8,13 +8,16 @@
 %}
 %token T_CHAR T_INT T_STRING T_BOOL 
 
-%token LOP_ASSIGN 
+%token LOP_ASSIGN ADD SUB MUL DIV
 
-%token SEMICOLON
+%token SEMICOLON LP RP LC RC WHILE ELSE IF RETURN FOR
 
 %token IDENTIFIER INTEGER CHAR BOOL STRING
 
-%left LOP_EQ
+%left MUL DIV
+%left ADD SUB
+%right LOP_ASSIGN
+%left LP RP
 
 %%
 
@@ -23,12 +26,14 @@ program
 
 statements
 :  statement {$$=$1;}
-|  statements statement {$$=$1; $$->addSibling($2);}
+|  statements statement {$$=$1; $$->addChild($2);}
 ;
 
 statement
 : SEMICOLON  {$$ = new TreeNode(lineno, NODE_STMT); $$->stype = STMT_SKIP;}
 | declaration SEMICOLON {$$ = $1;}
+| return SEMICOLON {$$ = $1;}
+| assign SEMICOLON {$$ = $1;}
 ;
 
 declaration
@@ -49,9 +54,26 @@ declaration
 }
 ;
 
+return
+: RETURN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype = STMT_RETURN;
+    node->addChild($2);
+    $$ = node;
+}
+
+assign
+: IDENTIFIER LOP_ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_ASSIGN;
+    node->addChild($3);
+    $$ = node;
+}
+
 expr
 : IDENTIFIER {
-    $$ = $1;
+    TreeNode* node = new TreeNode($1->lineno, NODE_VAR);
+    $$ = node;
 }
 | INTEGER {
     $$ = $1;
