@@ -8,7 +8,7 @@
 %}
 %token T_CHAR T_INT T_STRING T_BOOL 
 
-%token LOP_ASSIGN ADD SUB MUL DIV
+%token ASSIGN ADD SUB MUL DIV
 
 %token SEMICOLON LP RP LC RC WHILE ELSE IF RETURN FOR
 
@@ -16,7 +16,7 @@
 
 %left MUL DIV
 %left ADD SUB
-%right LOP_ASSIGN
+%right ASSIGN
 %left LP RP
 
 %%
@@ -37,7 +37,7 @@ statement
 ;
 
 declaration
-: T IDENTIFIER LOP_ASSIGN expr{  // declare and init
+: T IDENTIFIER ASSIGN expr{  // declare and init
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
@@ -54,6 +54,11 @@ declaration
 }
 ;
 
+//if语句
+//for语句
+//while语句
+
+//返回语句
 return
 : RETURN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
@@ -62,33 +67,73 @@ return
     $$ = node;
 }
 
+//赋值语句
 assign
-: IDENTIFIER LOP_ASSIGN expr {
+: IDENTIFIER ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_ASSIGN;
+    node->addChild($1);
     node->addChild($3);
     $$ = node;
 }
 
 expr
 : IDENTIFIER {
-    TreeNode* node = new TreeNode($1->lineno, NODE_VAR);
+    TreeNode* node = new TreeNode(lineno, NODE_VAR);
+    node->var_name = $1;
     $$ = node;
 }
 | INTEGER {
-    $$ = $1;
+    TreeNode* node = new TreeNode(lineno,NODE_CONST);
+    node->int_val = int($1);
+    $$ = node;
 }
 | CHAR {
-    $$ = $1;
+    TreeNode* node = new TreeNode(lineno,NODE_CONST);
+    node->ch_val = $1;
+    $$ = node;
 }
 | STRING {
-    $$ = $1;
+    TreeNode* node = new TreeNode(lineno,NODE_CONST);
+    node->str_val = $1;
+    $$ = node;
+}
+| expr ADD expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+| expr SUB expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+| expr MUL expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+| expr DIV expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+| SUB expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->addChild($2);
+    $$ = node;
 }
 ;
+
 
 T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;} 
 | T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
 | T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
+| T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_STRING;}
 ;
 
 %%
