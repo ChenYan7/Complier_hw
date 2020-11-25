@@ -8,8 +8,8 @@ extern int yyparse();
 using namespace std;
 int main(int argc, char *argv[])
 {
-    using std::cout;
-    cout.setf(std::ios::left);
+    //using std::cout;
+   // cout.setf(std::ios::left);
     if (argc == 2)
     {
         FILE *fin = fopen(argv[1], "r");

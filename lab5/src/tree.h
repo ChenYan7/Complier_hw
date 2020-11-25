@@ -3,8 +3,7 @@
 
 #include "pch.h"
 #include "type.h"
-
-int NodeID = 0;
+//static int node_num = 0;
 enum NodeType
 {
     NODE_CONST, 
@@ -52,14 +51,15 @@ enum StmtType {
 }
 ;
 
+
 struct TreeNode {
 public:
     int nodeID;  // 用于作业的序号输出
     int lineno;
     NodeType nodeType;
 
-    TreeNode* child[20];
-    TreeNode* sibling[20];
+    TreeNode* child = nullptr;
+    TreeNode* sibling = nullptr;
 
     int child_num;
     int sibling_num;

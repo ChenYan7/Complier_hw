@@ -6,18 +6,22 @@
     int yylex();
     int yyerror( char const * );
 %}
+%start program
+
 %token T_CHAR T_INT T_STRING T_BOOL 
-
-%token ASSIGN ADD SUB MUL DIV
-
+%token TRUE FALSE
+%token ASSIGN RELOP ADD SUB MUL DIV
+%token PRINTF SCANF
 %token SEMICOLON LP RP LC RC WHILE ELSE IF RETURN FOR
-
 %token IDENTIFIER INTEGER CHAR BOOL STRING
 
 %left MUL DIV
 %left ADD SUB
+%left RELOP
 %right ASSIGN
 %left LP RP
+%nonassoc LOWER_THEN_ELSE
+%nonassoc ELSE 
 
 %%
 
@@ -26,15 +30,22 @@ program
 
 statements
 :  statement {$$=$1;}
-|  statements statement {$$=$1; $$->addChild($2);}
+|  statements statement {$$=$1; $$->addSibling($2);}
 ;
 
 statement
 : SEMICOLON  {$$ = new TreeNode(lineno, NODE_STMT); $$->stype = STMT_SKIP;}
 | declaration SEMICOLON {$$ = $1;}
-| return SEMICOLON {$$ = $1;}
-| assign SEMICOLON {$$ = $1;}
+| expr SEMICOLON { $$ = $1;}
+| RETURN expr SEMICOLON {
+    TreeNode* node = new TreeNode(lineno,NODE_STMT);
+    node->stype = STMT_RETURN;
+    node->addChild($2);
+    $$ = node;
+}
+| LC statements RC {$$ = $2;}
 ;
+
 
 declaration
 : T IDENTIFIER ASSIGN expr{  // declare and init
@@ -54,48 +65,31 @@ declaration
 }
 ;
 
-//if语句
-//for语句
-//while语句
 
-//返回语句
-return
-: RETURN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype = STMT_RETURN;
-    node->addChild($2);
-    $$ = node;
+expr
+: IDENTIFIER {
+    $$ = $1;
 }
-
-//赋值语句
-assign
-: IDENTIFIER ASSIGN expr {
+| INTEGER {
+    $$ = $1;
+}
+| CHAR {
+    $$ = $1;
+}
+| STRING {
+    $$ = $1;
+}
+| expr ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$ = node;
 }
-
-expr
-: IDENTIFIER {
-    TreeNode* node = new TreeNode(lineno, NODE_VAR);
-    node->var_name = $1;
-    $$ = node;
-}
-| INTEGER {
-    TreeNode* node = new TreeNode(lineno,NODE_CONST);
-    node->int_val = int($1);
-    $$ = node;
-}
-| CHAR {
-    TreeNode* node = new TreeNode(lineno,NODE_CONST);
-    node->ch_val = $1;
-    $$ = node;
-}
-| STRING {
-    TreeNode* node = new TreeNode(lineno,NODE_CONST);
-    node->str_val = $1;
+| expr RELOP expr {
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->addChild($1);
+    node->addChild($3);
     $$ = node;
 }
 | expr ADD expr {

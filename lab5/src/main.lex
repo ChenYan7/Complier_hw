@@ -9,8 +9,9 @@ LINECOMMENT \/\/[^\n]*
 EOL	(\r\n|\r|\n)
 WHILTESPACE [[:blank:]]
 
-INTEGER [0-9]+
+relop ==|<=|>=|<|>|!=
 
+INTEGER [0-9]+
 CHAR \'.?\'
 STRING \".+\"
 
@@ -20,12 +21,36 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {BLOCKCOMMENT}  /* do nothing */
 {LINECOMMENT}  /* do nothing */
 
+"true" {
+    TreeNode *node = new TreeNode(lineno,NODE_CONST);
+    node->b_val = true;
+    yylval = node;
+    return TRUE;
+}
+"false" {
+    TreeNode *node = new TreeNode(lineno,NODE_CONST);
+    node->b_val = false;
+    yylval = node;
+    return FALSE;
+}
+
+
+"while" return WHILE;
+"if" return IF;
+"else" return ELSE;
+"for" return FOR;
+"return" return RETURN;
 
 "int" return T_INT;
 "bool" return T_BOOL;
 "char" return T_CHAR;
+"string" return T_STRING;
 
-"=" return LOP_ASSIGN;
+"printf" return PRINTF;
+"scanf" return SCANF;
+
+"=" return ASSIGN;
+{relop} return RELOP;
 
 ";" return  SEMICOLON;
 
@@ -49,9 +74,17 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {CHAR} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_CHAR;
-    node->int_val = yytext[1];
+    node->ch_val = yytext[1];
     yylval = node;
     return CHAR;
+}
+
+{STRING} {
+    TreeNode* node = new TreeNode(lineno, NODE_CONST);
+    node->type = TYPE_STRING;
+    node->str_val = yytext;
+    yylval = node;
+    return STRING;
 }
 
 {IDENTIFIER} {
