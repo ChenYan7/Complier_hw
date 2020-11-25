@@ -40,11 +40,16 @@ void TreeNode::genNodeId() {
 }
 
 void TreeNode::printNodeInfo() {
-    cout<<setw(10)<<"lno@"<<this->lineno;
-    cout<<setw(10)<<"@"<<this->nodeID;
-    cout<<setw(14)<<this->nodeType2String(this->nodeType);
-    cout<<"children:";
-    printChildrenId();
+    cout<<"lno@"<<this->lineno<<"   ";
+    cout<<"@"<<this->nodeID<<"  ";
+    cout<<this->nodeType2String(this->nodeType)<<"  ";
+    if(this->nodeType==NODE_PROG || this->nodeType==NODE_STMT || this->nodeType==NODE_EXPR)
+    {
+        cout<<"children:";
+        printChildrenId();
+    }
+    this->printSpecialInfo();
+    cout<<endl;
 }
 
 void TreeNode::printChildrenId() {
@@ -59,7 +64,7 @@ void TreeNode::printChildrenId() {
             node = node->sibling;
         }
     }
-    cout<<"]"<<endl;
+    cout<<"]";
 }
 
 void TreeNode::printAST() {
@@ -75,14 +80,18 @@ void TreeNode::printAST() {
 void TreeNode::printSpecialInfo() {
     switch(this->nodeType){
         case NODE_CONST:
+            cout<<"type:"<<this->type->getTypeInfo();
             break;
         case NODE_VAR:
+            cout<<"varname:"<<this->var_name;
             break;
         case NODE_EXPR:
             break;
         case NODE_STMT:
+            cout<<"stmt:"<<this->sType2String(this->stype);
             break;
         case NODE_TYPE:
+            cout<<"type:"<<this->type->getTypeInfo();
             break;
         default:
             break;
@@ -90,7 +99,38 @@ void TreeNode::printSpecialInfo() {
 }
 
 string TreeNode::sType2String(StmtType type) {
-    return "?";
+    string str;
+    switch(type)
+    {
+        case STMT_SKIP:
+            str = "skip";
+            break;
+        case STMT_DECL:
+            str = "declaration";
+            break;
+        case STMT_ASSIGN:
+            str = "assign";
+            break;
+        case STMT_IF:
+            str = "if";
+            break;
+        case STMT_WHILE:
+            str = "while";
+            break;
+        case STMT_FOR:
+            str = "for";
+            break;
+        case STMT_RETURN:
+            str = "return";
+            break;
+        case STMT_SCANF:
+            str = "scanf";
+            break;
+        case STMT_PRINTF:
+            str = "printf";
+            break;
+    }
+    return str;
 }
 
 
@@ -108,7 +148,7 @@ string TreeNode::nodeType2String (NodeType type){
             str = "program";
             break;
         case NODE_STMT:
-            str = "statment";
+            str = "statement";
             break;
         case NODE_TYPE:
             str = "type";

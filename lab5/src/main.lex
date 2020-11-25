@@ -51,6 +51,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 "=" return ASSIGN;
 {relop} return RELOP;
+"!" return NOT;
 
 ";" return  SEMICOLON;
 
