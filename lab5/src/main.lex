@@ -140,8 +140,8 @@ void stack_sub()
 }
 
 %}
-BLOCKCOMMENT \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
-LINECOMMENT \/\/[^\n]*
+SGPS \/\/.*
+DBPS \/\*(.|\n)*\*\/ 
 EOL	(\r\n|\r|\n)
 WHILTESPACE [[:blank:]]
 
@@ -154,8 +154,8 @@ STRING \".+\"
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 %%
 
-{BLOCKCOMMENT}  /* do nothing */
-{LINECOMMENT}  /* do nothing */
+{DBPS}  /* do nothing */
+{SGPS}  /* do nothing */
 
 "true" {
     TreeNode *node = new TreeNode(lineno,NODE_CONST);
@@ -177,8 +177,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "for" return FOR;
 "return" return RETURN;
 
-"void" return VOID;
-
+"void" {lasttoken = yytext; return T_VOID;};
 "int" { lasttoken = yytext; return T_INT;};
 "bool" { lasttoken = yytext; return T_BOOL;};
 "char" {lasttoken = yytext; return T_CHAR;};
@@ -186,14 +185,24 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 "printf" return PRINTF;
 "scanf" return SCANF;
+"&" return QUOTE;
 
 "=" return ASSIGN;
+"+=" return ADD_ASSIGN;
+"-=" return SUB_ASSIGN;
+"*=" return MUL_ASSIGN;
+"/=" return DIV_ASSIGN;
+
 {relop} return RELOP;
+"&&" return AND;
+"||" return OR;
 "!" return NOT;
 
 "," return COMMA;
 ";" return  SEMICOLON;
 
+"++" return INC;
+"--" return DEC;
 "+" return ADD;
 "-" return SUB;
 "*" return MUL;

@@ -13,24 +13,26 @@ enum NodeType
 
     NODE_STMT,
     NODE_PROG,
+    NODE_FUNC,
 };
 
 enum OperatorType
 {
     //关系运算
-    OP_EQ,  // ==
-    OP_GT,  // >
-    OP_LT,  // <
-    OP_GQT, // >=
-    OP_LQT, // <=
-    OP_NEQ, // !=
+    // OP_EQ,  // ==
+    // OP_GT,  // >
+    // OP_LT,  // <
+    // OP_GQT, // >=
+    // OP_LQT, // <=
+    // OP_NEQ, // !=
+    OP_RELOP,
 
     //算术运算符
     OP_ADD,
     OP_SUB,
     OP_MUL,
     OP_DIV,
-    OP_MOD, // %
+    //OP_MOD, // %
 
     //逻辑运算符
     OP_AND,

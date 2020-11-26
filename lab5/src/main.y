@@ -8,18 +8,20 @@
 %}
 %start program
 
-%token T_CHAR T_INT T_STRING T_BOOL 
+%token T_CHAR T_INT T_STRING T_BOOL T_VOID
 %token TRUE FALSE
-%token ASSIGN RELOP ADD SUB MUL DIV NOT
-%token PRINTF SCANF
-%token SEMICOLON LP RP LC RC WHILE ELSE IF RETURN FOR
+%token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
+%token RELOP ADD SUB MUL DIV INC DEC 
+%token AND OR NOT
+%token PRINTF SCANF QUOTE
+%token SEMICOLON COMMA LP RP LC RC WHILE ELSE IF RETURN FOR
 %token IDENTIFIER INTEGER CHAR BOOL STRING
 
-%right NOT
+%right AND OR NOT
 %left MUL DIV
 %left ADD SUB
 %left RELOP
-%right ASSIGN
+%right ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %left LP RP
 %nonassoc LOWER_THEN_ELSE
 %nonassoc ELSE 
@@ -37,7 +39,6 @@ statements
 statement
 : SEMICOLON  {$$ = new TreeNode(lineno, NODE_STMT); $$->stype = STMT_SKIP;}
 | declaration SEMICOLON {$$ = $1;}
-| assign SEMICOLON {$$ = $1;}
 | expr SEMICOLON { $$ = $1;}
 | RETURN expr SEMICOLON {
     TreeNode* node = new TreeNode(lineno,NODE_STMT);
@@ -51,40 +52,39 @@ statement
 | scanf SEMICOLON {$$ = $1;}
 | printf SEMICOLON {$$ = $1;}
 | LC statements RC {$$ = $2;}
+| func_statement {$$ = $1;}
 ;
 
-assign
-: expr ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
+func_statement
+: T IDENTIFIER LP RP statement{
+    TreeNode* node = new TreeNode($1->lineno,NODE_FUNC);
     node->addChild($1);
-    node->addChild($3);
-    $$=node;
+    node->addChild($2);
+    node->addChild($5);
+    $$ = node;
 }
+
 
 if_else
-: IF bool_statment statement %prec LOWER_THEN_ELSE {
+: IF bool_expr statement %prec LOWER_THEN_ELSE {
     TreeNode *node=new TreeNode($2->lineno,NODE_STMT);
     node->stype=STMT_IF;
     node->addChild($2);
     node->addChild($3);
     $$=node;
 }
-| IF bool_statment statement ELSE statement {
+| IF LP bool_expr RP statement ELSE statement {
     TreeNode *node=new TreeNode($2->lineno,NODE_STMT);
     node->stype=STMT_IF;
-    node->addChild($2);
     node->addChild($3);
     node->addChild($5);
+    node->addChild($7);
     $$=node;
 }
 ;
 
-bool_statment
-: LP bool_expr RP {$$=$2;};
-
 while
-: WHILE bool_statment statement {
+: WHILE bool_expr statement {
     TreeNode *node=new TreeNode($2->lineno,NODE_STMT);
     node->stype=STMT_WHILE;
     node->addChild($2);
@@ -105,10 +105,11 @@ for
 }
 
 printf
-: PRINTF LP expr RP {
+: PRINTF LP expr COMMA io_list RP {
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_PRINTF;
     node->addChild($3);
+    node->addChild($5);
     $$=node;
 }
 ;
@@ -120,7 +121,20 @@ scanf
     node->addChild($3);
     $$=node;
 }
+| SCANF LP expr COMMA io_list RP {
+    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
+    node->stype=STMT_SCANF;
+    node->addChild($3);
+    node->addChild($5);
+    $$=node;
+}
 ;
+
+io_list
+: IDENTIFIER {$$=$1;}
+| STRING {$$=$1;}
+| INTEGER {$$=$1;}
+| QUOTE CHAR {$$=$2;}
 
 declaration
 : T IDENTIFIER ASSIGN expr{  // declare and init
@@ -131,7 +145,7 @@ declaration
     node->addChild($4);
     $$ = node;   
 } 
-| T IDENTIFIER {
+| T id_list {
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
@@ -140,21 +154,45 @@ declaration
 }
 ;
 
-bool_expr
-: TRUE {$$=$1;}
-| FALSE {$$=$1;}
-| expr RELOP expr {
-    TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
-    //node->opType=OP_EQUAL;
+id_list
+: IDENTIFIER {$$=$1;}
+| IDENTIFIER COMMA id_list{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->addChild($1);
     node->addChild($3);
     $$=node;
 }
+
+bool_expr
+: TRUE {$$=$1;}
+| FALSE {$$=$1;}
+| expr {$$ = $1;}
+| bool_expr AND bool_expr {
+    TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_AND;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+} 
+| bool_expr OR bool_expr {
+    TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_OR;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+} 
 | NOT bool_expr {
     TreeNode *node=new TreeNode($2->lineno,NODE_EXPR);
-    //node->opType=OP_NOT;
+    node->optype=OP_NOT;
     node->addChild($2);
     $$=node;        
+}
+| bool_expr RELOP bool_expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_RELOP;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
 }
 ;
 
@@ -170,6 +208,41 @@ expr
 }
 | STRING {
     $$ = $1;
+}
+| expr ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| expr ADD_ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| expr SUB_ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| expr MUL_ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| expr DIV_ASSIGN expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
 }
 | expr ADD expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
@@ -207,6 +280,7 @@ T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;}
 | T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
 | T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
 | T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_STRING;}
+| T_VOID {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_VOID;}
 ;
 
 %%
