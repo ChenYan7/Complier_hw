@@ -69,7 +69,7 @@
 #line 1 "src/main.y"
 
     #include "common.h"
-    #define YYSTYPE TreeNode *  
+    #define YYSTYPE TreeNode * 
     TreeNode* root;
     extern int lineno;
     int yylex();
