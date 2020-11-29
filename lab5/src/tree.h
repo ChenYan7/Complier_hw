@@ -3,7 +3,7 @@
 
 #include "pch.h"
 #include "type.h"
-//static int node_num = 0;
+
 enum NodeType
 {
     NODE_CONST, 
@@ -19,25 +19,35 @@ enum NodeType
 enum OperatorType
 {
     //关系运算
-    // OP_EQ,  // ==
-    // OP_GT,  // >
-    // OP_LT,  // <
-    // OP_GQT, // >=
-    // OP_LQT, // <=
-    // OP_NEQ, // !=
-    OP_RELOP,
+    OP_EQ,  // ==
+    OP_GT,  // >
+    OP_LT,  // <
+    OP_GQT, // >=
+    OP_LQT, // <=
+    OP_NEQ, // !=
 
     //算术运算符
     OP_ADD,
     OP_SUB,
     OP_MUL,
     OP_DIV,
-    //OP_MOD, // %
+    OP_MODE, // %
 
     //逻辑运算符
     OP_AND,
     OP_OR,
     OP_NOT,
+
+    //赋值符
+    OP_ASSIGN,
+    OP_ADD_ASSIGN,
+    OP_SUB_ASSIGN,
+    OP_MUL_ASSIGN,
+    OP_DIV_ASSIGN,
+
+    OP_INC,
+    OP_DEC,
+    OP_COMMA,
 };
 
 enum StmtType {

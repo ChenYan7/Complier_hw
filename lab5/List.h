@@ -13,7 +13,7 @@ struct List_Node{
     void genCount();
 };
 
-List_Node* first=nullptr;
+//List_Node* first=nullptr;
 void Insert_undef_ID(string name);
 void Insert_def_ID(string name);
 void stack_add();

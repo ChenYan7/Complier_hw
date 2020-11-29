@@ -3,20 +3,26 @@
 #include "common.h"
 #include "main.tab.h"  // yacc header
 int lineno=1;
+int id_count=0;
 string lasttoken;
 
 struct List_Node{
+public:
     string name;
-    stack<int> s;
+    stack<char> s;
     int count = 0;
+    int num = 0;
+    int flag;
     struct List_Node* next=nullptr;
     List_Node(string name);
     void genCount();
+    void IDcount();
 };
 
 List_Node* first=nullptr;
-void Insert_undef_ID(string name);
-void Insert_def_ID(string name);
+List_Node* tail=nullptr;
+int Insert_undef_ID(string name);
+int Insert_def_ID(string name);
 void stack_add();
 void stack_sub();
 
@@ -30,112 +36,101 @@ void List_Node::genCount()
     this->count += 1;
 }
 
+void List_Node::IDcount()
+{
+    this->num = id_count;
+}
+
 //若找到同名且stack为空的节点则为重复声明
-void Insert_undef_ID(string name){
+int Insert_undef_ID(string name){
     if(first==nullptr)
     {
         List_Node* node = new List_Node(name);
-        first = node;
+        node->flag = 1;
+        id_count += 1;
+        node->IDcount();
+        first = tail = node;
         first->genCount();
-        return;   //正常返回
+        return first->num;   //正常返回
     }
-    List_Node* cur = first;
-    while(cur)
-    {
-        if(cur->name==name && cur->s.empty())
+    else{
+        List_Node* cur = first;
+        while(cur)
         {
-            cout<<"error：重复声明"<<endl;
-            return;   //重复声明,报错
+            if(cur->name==name && cur->s.empty() && cur->flag==1)
+            {
+                cout<<"line "<<lineno<<" error:"<<name<<"变量重复声明"<<endl;
+                return -1;   //重复声明,报错
+            }
+            cur = cur->next;
         }
-        cur = cur->next;
+        //若不是在同一个作用域，则使用尾插法添加节点
+        List_Node* node = new List_Node(name);
+        node->flag = 1;
+        id_count += 1;
+        node->IDcount();
+        tail->next = node;
+        tail = node;
+        tail->genCount();
+        return tail->num;
     }
-    //若不是在同一个作用域，则使用头插法添加节点
-    List_Node* node = new List_Node(name);
-    node->next = first;
-    node->genCount();
-    first = node;
-    return;
 }
 
 //找同名且stack最小的
-void Insert_def_ID(string name)
+int Insert_def_ID(string name)
 {
     int min_count=100;
     if(first==nullptr)
     {
-        cout<<"error:变量未声明"<<endl;
-        return;  //未声明变量
+        cout<<"line "<<lineno<<" error:"<<name<<"变量未声明"<<endl;
+        return -1;  //未声明变量
     }
     List_Node* cur = first;
     List_Node* node;
     while(cur)
     {
-        if(cur->name==name && cur->s.size()<min_count)
+        if(cur->name==name && cur->flag==1 && (int)cur->s.size()<min_count)
         {
             node = cur;
-            min_count = cur->s.size();
+            min_count = (int)cur->s.size();
         }
         cur = cur->next;
     }
     if(min_count!=100)
     {
         node->genCount();
-        return;
+        return node->num;
     }
     else{
-        cout<<"error:变量未声明"<<endl;
-        return;  //未声明变量
+        cout<<"line "<<lineno<<" error:"<<name<<"变量未声明"<<endl;
+        return -1;  //未声明变量
     }
 }
 
-//遇到LP，所有ID的stack加上一个元素1
+//遇到LC，所有ID的stack加上一个元素1
 void stack_add()
 {
     List_Node* cur = first;
     while(cur)
     {
-        cur->s.push(1);
+        if(cur->flag==1)
+            cur->s.push('L');
         cur = cur->next;
     }
 }
 
-//遇到RP，所有ID的stack pop掉一个元素，如果stack为空了，就释放掉节点
+//遇到RC，所有ID的stack pop掉一个元素，如果stack为空了，就释放掉节点
 void stack_sub()
 {
-    if(first!=nullptr)
+    List_Node* cur = first;
+    while(cur)
     {
-        if(first->next==nullptr)    //只有一个变量
+        if(!cur->s.empty())
         {
-            if(first->s.empty())
-            {
-                first = nullptr;//如果stack为空就释放掉
-            }
-            else first->s.pop();
+            cur->s.pop();
         }
-        else{
-            if(first->s.empty())
-            {
-                first = first->next;
-            }
-            else first->s.pop();
-            List_Node* cur = first;
-            while(cur->next)
-            {
-                if(cur->next->s.empty())
-                {
-                    cur->next = cur->next->next;
-                }
-                else{
-                    cur->next->s.pop();
-                }
-                cur = cur->next;
-            }
-            if(cur->s.empty())
-            {
-                cur = nullptr;
-            }
-            else cur->s.pop();
-        } 
+        else cur->flag = 0;
+        cur = cur->next;
     }
 }
 
@@ -145,11 +140,24 @@ DBPS \/\*(.|\n)*\*\/
 EOL	(\r\n|\r|\n)
 WHILTESPACE [[:blank:]]
 
-relop ==|<=|>=|<|>|!=
 
-INTEGER [0-9]+
+/* INTEGER [0-9]+ */
 CHAR \'.?\'
 STRING \".+\"
+
+/*科学计数表示*/
+science {decimal}(\.[0-9]+)?([Ee][-+]?[0-9]+)?
+/*十进制*/
+decimal ([-])?(0|[1-9][0-9]*)
+/*十六进制*/
+hexadecimal 0[xX][a-fA-F0-9]+
+/*二进制*/
+binary 0[bB][01]+
+/*八进制*/
+octal 0[0-7]+
+/*总表示*/
+INTEGER ({hexadecimal}|{binary}|{science}|{octal})(([uU]?[Ll]?)|([Ll]?[Uu]?)|([fF]?))
+/*注意浮点数总是有符号，不需要Uu后缀，所以在接下来单做一个浮点数异常处理*/
 
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 %%
@@ -177,6 +185,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "for" return FOR;
 "return" return RETURN;
 
+"const" return CONST;
 "void" {lasttoken = yytext; return T_VOID;};
 "int" { lasttoken = yytext; return T_INT;};
 "bool" { lasttoken = yytext; return T_BOOL;};
@@ -185,7 +194,6 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 "printf" return PRINTF;
 "scanf" return SCANF;
-"&" return QUOTE;
 
 "=" return ASSIGN;
 "+=" return ADD_ASSIGN;
@@ -193,13 +201,20 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "*=" return MUL_ASSIGN;
 "/=" return DIV_ASSIGN;
 
-{relop} return RELOP;
+"==" return EQ;
+"!=" return NEQ;
+">=" return GQT;
+"<=" return LQT;
+">" return GT;
+"<" return LT;
+
 "&&" return AND;
 "||" return OR;
 "!" return NOT;
 
 "," return COMMA;
-";" return  SEMICOLON;
+";" {lasttoken = " "; return SEMICOLON;};
+"&" return QUOTE;
 
 "++" return INC;
 "--" return DEC;
@@ -207,10 +222,11 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "-" return SUB;
 "*" return MUL;
 "/" return DIV;
+"%" return MODE;
 "(" return LP;
 ")" return RP;
-"{" {stack_add(); return LC;};
-"}" {stack_sub(); return RC;};
+"{" { lasttoken = " "; stack_add(); return LC;};
+"}" {stack_sub();return RC;};
 
 {INTEGER} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
@@ -237,12 +253,15 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 }
 
 {IDENTIFIER} {
-    if(lasttoken=="")
+    int x=0;
+    if(lasttoken==" ")
     {
-        Insert_def_ID(yytext);
+        x = Insert_def_ID(yytext);
+        cout<<yytext<<":"<<x<<endl;
     }
     else{
-        Insert_undef_ID(yytext);
+        x = Insert_undef_ID(yytext);
+        cout<<yytext<<":"<<x<<endl;
     }
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
@@ -252,7 +271,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 {WHILTESPACE} /* do nothing */
 
-{EOL} {lasttoken = ""; lineno++;}
+{EOL} {lineno++;}
 
 . {
     cerr << "[line "<< lineno <<" ] unknown character:" << yytext << endl;

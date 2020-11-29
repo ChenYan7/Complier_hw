@@ -41,11 +41,11 @@ void TreeNode::genNodeId() {
 
 void TreeNode::printNodeInfo() {
     cout<<"lno@"<<this->lineno<<"   ";
-    cout<<"@"<<this->nodeID<<"  ";
-    cout<<this->nodeType2String(this->nodeType)<<"  ";
-    if(this->nodeType==NODE_PROG || this->nodeType==NODE_STMT || this->nodeType==NODE_EXPR)
+    cout<<"@"<<this->nodeID<<"      ";
+    cout<<this->nodeType2String(this->nodeType)<<"    ";
+    if(this->nodeType==NODE_PROG || this->nodeType==NODE_STMT || this->nodeType==NODE_EXPR || this->nodeType==NODE_FUNC)
     {
-        cout<<"children:";
+        cout<<"children: ";
         printChildrenId();
     }
     this->printSpecialInfo();
@@ -53,7 +53,7 @@ void TreeNode::printNodeInfo() {
 }
 
 void TreeNode::printChildrenId() {
-    cout<<"[";
+    cout<<"[ ";
     if(this->child!=nullptr)
     {
         cout<<"@"<<this->child->nodeID<<" ";
@@ -64,7 +64,7 @@ void TreeNode::printChildrenId() {
             node = node->sibling;
         }
     }
-    cout<<"]";
+    cout<<"]    ";
 }
 
 void TreeNode::printAST() {
@@ -86,6 +86,7 @@ void TreeNode::printSpecialInfo() {
             cout<<"varname:"<<this->var_name;
             break;
         case NODE_EXPR:
+            cout<<"op:"<<this->opType2String(this->optype);
             break;
         case NODE_STMT:
             cout<<"stmt:"<<this->sType2String(this->stype);
@@ -156,6 +157,88 @@ string TreeNode::nodeType2String (NodeType type){
         case NODE_VAR:
             str = "variable";
             break;
+        case NODE_FUNC:
+            str = "function";
+            break;
+        default:
+            str = "?";
+    }
+    return str;
+}
+
+string TreeNode::opType2String (OperatorType type)
+{
+    string str;
+    switch(type)
+    {
+        case OP_EQ:
+            str = "==";
+            break;
+        case OP_GT:
+            str = ">";
+            break;
+        case OP_LT:
+            str = "<";
+            break;
+        case OP_GQT:
+            str = ">=";
+            break;
+        case OP_LQT:
+            str = "<=";
+            break;
+        case OP_NEQ:
+            str = "!=";
+            break;
+        case OP_ADD:
+            str = "+";
+            break;
+        case OP_SUB:
+            str = "-";
+            break;
+        case OP_MUL:
+            str = "*";
+            break;
+        case OP_DIV:
+            str = "/";
+            break;
+        case OP_MODE:
+            str = "%";
+            break;
+        case OP_AND:
+            str = "&&";
+            break;
+        case OP_OR:
+            str = "||";
+            break;
+        case OP_NOT:
+            str = "!";
+            break;
+        case OP_ASSIGN:
+            str = "=";
+            break;
+        case OP_ADD_ASSIGN:
+            str = "+=";
+            break;
+        case OP_SUB_ASSIGN:
+            str = "-=";
+            break;
+        case OP_MUL_ASSIGN:
+            str = "*=";
+            break;
+        case OP_DIV_ASSIGN:
+            str = "/=";
+            break;
+        case OP_INC:
+            str = "++";
+            break;
+        case OP_DEC:
+            str = "--";
+            break;
+        case OP_COMMA:
+            str = ",";
+            break;
+        default:
+            str = "??";
     }
     return str;
 }
