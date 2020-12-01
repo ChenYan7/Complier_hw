@@ -98,7 +98,8 @@ extern int yydebug;
     BOOL = 304,
     STRING = 305,
     UMINUS = 306,
-    LOWER_THEN_ELSE = 307
+    UADD = 307,
+    LOWER_THEN_ELSE = 308
   };
 #endif
 

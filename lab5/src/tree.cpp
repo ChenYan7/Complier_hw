@@ -81,6 +81,14 @@ void TreeNode::printSpecialInfo() {
     switch(this->nodeType){
         case NODE_CONST:
             cout<<"type:"<<this->type->getTypeInfo();
+            if(this->type->getTypeInfo()=="bool")
+                cout<<" [var:"<<this->b_val<<"]";
+            if(this->type->getTypeInfo()=="int")
+                cout<<" [var:"<<this->int_val<<"]";
+            if(this->type->getTypeInfo()=="char")
+                cout<<" [var:"<<this->ch_val<<"]";
+            if(this->type->getTypeInfo()=="string")
+                cout<<" [var:"<<this->str_val<<"]";
             break;
         case NODE_VAR:
             cout<<"varname:"<<this->var_name;
@@ -90,6 +98,10 @@ void TreeNode::printSpecialInfo() {
             break;
         case NODE_STMT:
             cout<<"stmt:"<<this->sType2String(this->stype);
+            if(this->sType2String(this->stype)=="assign")
+            {
+                cout<<"   op:"<<this->opType2String(this->optype);
+            }
             break;
         case NODE_TYPE:
             cout<<"type:"<<this->type->getTypeInfo();

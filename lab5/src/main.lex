@@ -2,6 +2,7 @@
 %{
 #include "common.h"
 #include "main.tab.h"  // yacc header
+
 int lineno=1;
 int id_count=0;
 string lasttoken;
@@ -257,11 +258,11 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     if(lasttoken==" ")
     {
         x = Insert_def_ID(yytext);
-        cout<<yytext<<":"<<x<<endl;
+        //cout<<yytext<<":"<<x<<endl;
     }
     else{
         x = Insert_undef_ID(yytext);
-        cout<<yytext<<":"<<x<<endl;
+        //cout<<yytext<<":"<<x<<endl;
     }
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);

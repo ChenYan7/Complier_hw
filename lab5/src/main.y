@@ -26,7 +26,7 @@
 %left GT LT GQT LQT
 %left ADD SUB
 %left MUL DIV MODE
-%right UMINUS
+%right UMINUS UADD
 %right INC DEC NOT
 %left LP RP
 %nonassoc LOWER_THEN_ELSE
@@ -123,6 +123,31 @@ printf
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_PRINTF;
     node->addChild($3);
+    string str = $3->str_val;
+    char t[10];
+    int i = 0;
+    int num = 0;
+    while(i<(int)str.length())
+    {
+        if(str[i]=='%')
+        {
+            if(str[i+1]=='d' || str[i+1]=='s')
+            {
+                t[num] = str[i+1];
+                num++;
+            }
+        }
+        i++;
+    }
+    i = 0;
+    while(i<num)
+    {
+        TreeNode* node_c = new TreeNode(lineno, NODE_CONST);
+        node_c->type = TYPE_CHAR;
+        node_c->ch_val = t[i];
+        node->addChild(node_c);
+        i++;
+    }
     node->addChild($5);
     $$=node;
 }
@@ -139,17 +164,42 @@ scanf
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_SCANF;
     node->addChild($3);
+    string str = $3->str_val;
+    char t[10];
+    int i = 0;
+    int num = 0;
+    while(i<(int)str.length())
+    {
+        if(str[i]=='%')
+        {
+            if(str[i+1]=='d' || str[i+1]=='s')
+            {
+                t[num] = str[i+1];
+                num++;
+            }
+        }
+        i++;
+    }
+    i = 0;
+    while(i<num)
+    {
+        TreeNode* node_c = new TreeNode(lineno, NODE_CONST);
+        node_c->type = TYPE_CHAR;
+        node_c->ch_val = t[i];
+        node->addChild(node_c);
+        i++;
+    }
     node->addChild($5);
     $$=node;
 }
 ;
 
 io_list
-: IDENTIFIER {$$=$1;}
-| STRING {$$=$1;}
-| INTEGER {$$=$1;}
-| CHAR {$$=$1;}
-| QUOTE IDENTIFIER {$$=$2;}
+: expr {$$=$1;}
+| io_list COMMA expr {
+    $$ = $1;
+    $$->addSibling($3);
+}
 ;
 
 declaration
@@ -190,6 +240,7 @@ expr
 : IDENTIFIER {
     $$ = $1;
 }
+| QUOTE IDENTIFIER {$$=$2;}
 | INTEGER {
     $$ = $1;
 }
@@ -214,6 +265,7 @@ expr
 | expr ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
     node->stype=STMT_ASSIGN;
+    node->optype=OP_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$=node;
@@ -221,6 +273,7 @@ expr
 | expr ADD_ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
     node->stype=STMT_ASSIGN;
+    node->optype=OP_ADD_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$=node;
@@ -228,6 +281,7 @@ expr
 | expr SUB_ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
     node->stype=STMT_ASSIGN;
+    node->optype=OP_SUB_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$=node;
@@ -235,6 +289,7 @@ expr
 | expr MUL_ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
     node->stype=STMT_ASSIGN;
+    node->optype=OP_MUL_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$=node;
@@ -242,6 +297,7 @@ expr
 | expr DIV_ASSIGN expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
     node->stype=STMT_ASSIGN;
+    node->optype=OP_DIV_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     $$=node;
@@ -284,6 +340,12 @@ expr
 | SUB expr %prec UMINUS {
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_SUB;
+    node->addChild($2);
+    $$ = node;
+}
+| ADD expr %prec UADD {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_ADD;
     node->addChild($2);
     $$ = node;
 }
