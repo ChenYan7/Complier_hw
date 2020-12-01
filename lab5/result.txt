@@ -1,81 +1,82 @@
 lno@0   @0      program    children: [ @1 ]    
-lno@2   @1      function    children: [ @2 @3 @4 @8 @11 @14 @17 @21 ]    
-lno@2   @2      type    type:void
-lno@2   @3      variable    varname:main
-lno@3   @4      statement    children: [ @5 @6 @7 ]    stmt:declaration
-lno@3   @5      type    type:int
-lno@3   @6      variable    varname:a
-lno@3   @7      variable    varname:s
-lno@4   @8      statement    children: [ @9 @10 ]    stmt:assign   op:=
-lno@4   @9      variable    varname:a
-lno@4   @10      const    type:int [var:10]
-lno@5   @11      statement    children: [ @12 @13 ]    stmt:assign   op:=
-lno@5   @12      variable    varname:s
-lno@5   @13      const    type:int [var:0]
-lno@6   @14      statement    children: [ @15 @16 ]    stmt:declaration
-lno@6   @15      type    type:char
-lno@6   @16      variable    varname:ch
-lno@7   @17      statement    children: [ @18 @19 @20 ]    stmt:scanf
-lno@7   @18      const    type:string [var:"%d"]
-lno@7   @19      const    type:char [var:d]
-lno@7   @20      variable    varname:ch
-lno@8   @21      statement    children: [ @22 @40 @43 @46 @49 @52 ]    stmt:while
-lno@8   @22      expr    children: [ @23 @30 ]    op:||
-lno@8   @23      expr    children: [ @24 @27 ]    op:&&
-lno@8   @24      expr    children: [ @25 @26 ]    op:>
-lno@8   @25      variable    varname:a
-lno@8   @26      const    type:int [var:0]
-lno@8   @27      expr    children: [ @28 @29 ]    op:<=
-lno@8   @28      variable    varname:a
-lno@8   @29      const    type:int [var:10]
-lno@8   @30      expr    children: [ @31 @36 ]    op:&&
-lno@8   @31      expr    children: [ @32 @35 ]    op:==
-lno@8   @32      expr    children: [ @33 @34 ]    op:%
-lno@8   @33      variable    varname:a
-lno@8   @34      const    type:int [var:100]
-lno@8   @35      const    type:int [var:10]
-lno@8   @36      expr    children: [ @37 @39 ]    op:==
-lno@8   @37      expr    children: [ @38 ]    op:!
-lno@8   @38      variable    varname:a
-lno@8   @39      const    type:int [var:10]
-lno@9   @40      statement    children: [ @41 @42 ]    stmt:assign   op:-=
-lno@9   @41      variable    varname:a
-lno@9   @42      const    type:int [var:1]
-lno@10   @43      statement    children: [ @44 @45 ]    stmt:declaration
-lno@10   @44      type    type:int
-lno@10   @45      variable    varname:a
-lno@11   @46      statement    children: [ @47 @48 ]    stmt:assign   op:=
-lno@11   @47      variable    varname:a
-lno@11   @48      const    type:int [var:10]
-lno@12   @49      statement    children: [ @50 @51 ]    stmt:assign   op:+=
-lno@12   @50      variable    varname:s
-lno@12   @51      variable    varname:a
-lno@12   @52      statement    children: [ @53 @57 @61 @64 @67 ]    stmt:if
-lno@12   @53      expr    children: [ @54 @56 ]    op:<
-lno@12   @54      expr    children: [ @55 ]    op:-
-lno@13   @55      variable    varname:s
-lno@13   @56      const    type:int [var:-10]
-lno@14   @57      statement    children: [ @58 @59 @60 ]    stmt:printf
-lno@14   @58      const    type:string [var:"result is: %d\n"]
-lno@14   @59      const    type:char [var:d]
-lno@14   @60      variable    varname:s
-lno@15   @61      statement    children: [ @62 @63 ]    stmt:declaration
-lno@15   @62      type    type:int
-lno@15   @63      variable    varname:b
-lno@16   @64      statement    children: [ @65 @66 ]    stmt:assign   op:=
-lno@16   @65      variable    varname:b
-lno@16   @66      const    type:int [var:10]
-lno@17   @67      statement    children: [ @68 @72 @75 @77 ]    stmt:for
-lno@17   @68      statement    children: [ @69 @70 @71 ]    stmt:declaration
-lno@17   @69      type    type:int
-lno@17   @70      variable    varname:i
-lno@17   @71      const    type:int [var:0]
-lno@17   @72      expr    children: [ @73 @74 ]    op:<
-lno@17   @73      variable    varname:i
-lno@17   @74      variable    varname:b
-lno@17   @75      expr    children: [ @76 ]    op:++
-lno@17   @76      variable    varname:i
-lno@18   @77      statement    children: [ @78 @79 @80 ]    stmt:printf
-lno@18   @78      const    type:string [var:"Have fun: %d\n"]
-lno@18   @79      const    type:char [var:d]
-lno@18   @80      variable    varname:i
+lno@4   @1      function    children: [ @2 @3 @4 @8 @11 @14 @17 @21 ]    
+lno@4   @2      type    type:void
+lno@4   @3      variable    varname:main
+lno@5   @4      statement    children: [ @5 @6 @7 ]    stmt:declaration
+lno@5   @5      type    type:int
+lno@5   @6      variable    varname:a
+lno@5   @7      variable    varname:s
+lno@6   @8      statement    children: [ @9 @10 ]    stmt:assign   op:=
+lno@6   @9      variable    varname:a
+lno@6   @10      const    type:int [var:10]
+lno@7   @11      statement    children: [ @12 @13 ]    stmt:assign   op:=
+lno@7   @12      variable    varname:s
+lno@7   @13      const    type:int [var:0]
+lno@8   @14      statement    children: [ @15 @16 ]    stmt:declaration
+lno@8   @15      type    type:char
+lno@8   @16      variable    varname:ch
+lno@9   @17      statement    children: [ @18 @19 @20 ]    stmt:scanf
+lno@9   @18      const    type:string [var:"%d"]
+lno@9   @19      const    type:char [var:d]
+lno@9   @20      variable    varname:ch
+lno@10   @21      statement    children: [ @22 @40 @43 @46 @49 @52 ]    stmt:while
+lno@10   @22      expr    children: [ @23 @30 ]    op:||
+lno@10   @23      expr    children: [ @24 @27 ]    op:&&
+lno@10   @24      expr    children: [ @25 @26 ]    op:>
+lno@10   @25      variable    varname:a
+lno@10   @26      const    type:int [var:0]
+lno@10   @27      expr    children: [ @28 @29 ]    op:<=
+lno@10   @28      variable    varname:a
+lno@10   @29      const    type:int [var:10]
+lno@10   @30      expr    children: [ @31 @36 ]    op:&&
+lno@10   @31      expr    children: [ @32 @35 ]    op:==
+lno@10   @32      expr    children: [ @33 @34 ]    op:%
+lno@10   @33      variable    varname:a
+lno@10   @34      const    type:int [var:100]
+lno@10   @35      const    type:int [var:10]
+lno@10   @36      expr    children: [ @37 @39 ]    op:==
+lno@10   @37      expr    children: [ @38 ]    op:!
+lno@10   @38      variable    varname:a
+lno@10   @39      const    type:int [var:10]
+lno@11   @40      statement    children: [ @41 @42 ]    stmt:assign   op:-=
+lno@11   @41      variable    varname:a
+lno@11   @42      const    type:int [var:1]
+lno@12   @43      statement    children: [ @44 @45 ]    stmt:declaration
+lno@12   @44      type    type:int
+lno@12   @45      variable    varname:a
+lno@13   @46      statement    children: [ @47 @48 ]    stmt:assign   op:=
+lno@13   @47      variable    varname:a
+lno@13   @48      const    type:int [var:10]
+lno@14   @49      statement    children: [ @50 @51 ]    stmt:assign   op:+=
+lno@14   @50      variable    varname:s
+lno@14   @51      variable    varname:a
+lno@14   @52      statement    children: [ @53 @58 @62 @65 @68 ]    stmt:if
+lno@14   @53      expr    children: [ @54 @56 ]    op:<
+lno@14   @54      expr    children: [ @55 ]    op:-
+lno@15   @55      variable    varname:s
+lno@15   @56      expr    children: [ @57 ]    op:-
+lno@15   @57      const    type:int [var:10]
+lno@16   @58      statement    children: [ @59 @60 @61 ]    stmt:printf
+lno@16   @59      const    type:string [var:"result is: %d\n"]
+lno@16   @60      const    type:char [var:d]
+lno@16   @61      variable    varname:s
+lno@17   @62      statement    children: [ @63 @64 ]    stmt:declaration
+lno@17   @63      type    type:int
+lno@17   @64      variable    varname:b
+lno@18   @65      statement    children: [ @66 @67 ]    stmt:assign   op:=
+lno@18   @66      variable    varname:b
+lno@18   @67      const    type:int [var:10]
+lno@19   @68      statement    children: [ @69 @73 @76 @78 ]    stmt:for
+lno@19   @69      statement    children: [ @70 @71 @72 ]    stmt:declaration
+lno@19   @70      type    type:int
+lno@19   @71      variable    varname:i
+lno@19   @72      const    type:int [var:0]
+lno@19   @73      expr    children: [ @74 @75 ]    op:<
+lno@19   @74      variable    varname:i
+lno@19   @75      variable    varname:b
+lno@19   @76      expr    children: [ @77 ]    op:++
+lno@19   @77      variable    varname:i
+lno@20   @78      statement    children: [ @79 @80 @81 ]    stmt:printf
+lno@20   @79      const    type:string [var:"Have fun: %d\n"]
+lno@20   @80      const    type:char [var:d]
+lno@20   @81      variable    varname:i

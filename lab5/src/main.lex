@@ -6,6 +6,7 @@
 int lineno=1;
 int id_count=0;
 string lasttoken;
+int count_c=0;
 
 struct List_Node{
 public:
@@ -136,35 +137,32 @@ void stack_sub()
 }
 
 %}
-SGPS \/\/.*
-DBPS \/\*(.|\n)*\*\/ 
+
+commentbegin "/*"
+commentelement .|\n
+commentend "*/"
+
+LINECOMMENT \/\/[^\n]*
 EOL	(\r\n|\r|\n)
 WHILTESPACE [[:blank:]]
 
 
-/* INTEGER [0-9]+ */
+INTEGER [0-9]+
 CHAR \'.?\'
 STRING \".+\"
 
-/*科学计数表示*/
-science {decimal}(\.[0-9]+)?([Ee][-+]?[0-9]+)?
-/*十进制*/
-decimal ([-])?(0|[1-9][0-9]*)
-/*十六进制*/
-hexadecimal 0[xX][a-fA-F0-9]+
-/*二进制*/
-binary 0[bB][01]+
-/*八进制*/
-octal 0[0-7]+
-/*总表示*/
-INTEGER ({hexadecimal}|{binary}|{science}|{octal})(([uU]?[Ll]?)|([Ll]?[Uu]?)|([fF]?))
-/*注意浮点数总是有符号，不需要Uu后缀，所以在接下来单做一个浮点数异常处理*/
-
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
+
+%x COMMENT
 %%
 
-{DBPS}  /* do nothing */
-{SGPS}  /* do nothing */
+{commentbegin} { count_c++; BEGIN COMMENT;}
+<COMMENT>{commentbegin} { count_c++; }
+<COMMENT>{commentend} {count_c--; if(count_c<=0) BEGIN INITIAL;}
+<COMMENT>{EOL} {lineno++;}
+<COMMENT>{commentelement} {}
+
+{LINECOMMENT} {lineno++;}
 
 "true" {
     TreeNode *node = new TreeNode(lineno,NODE_CONST);
