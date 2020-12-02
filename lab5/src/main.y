@@ -36,8 +36,8 @@
 
 program
 : statements {root = new TreeNode(0, NODE_PROG); root->addChild($1);}
-
 ;
+
 statements
 :  statement {$$=$1;}
 |  statements statement {$$=$1; $$->addSibling($2);}
