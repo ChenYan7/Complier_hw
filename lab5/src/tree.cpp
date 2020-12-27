@@ -1,5 +1,6 @@
 #include "tree.h"
 static int node_num = 0;
+
 void TreeNode::addChild(TreeNode* child) {
     if(this->child==nullptr)
     {
@@ -254,3 +255,5 @@ string TreeNode::opType2String (OperatorType type)
     }
     return str;
 }
+
+

@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include "type.h"
+#include "symboltable.h"
 
 enum NodeType
 {
@@ -96,6 +97,8 @@ public:
     bool b_val;
     string str_val;
     string var_name;
+    bool is_def;//若在定义语句中，is_def=1，否则为0 
+
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);

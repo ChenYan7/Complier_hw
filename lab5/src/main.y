@@ -111,6 +111,14 @@ for
     node->addChild($7);
     $$ = node;
 }
+| FOR LP statement statement RP statement {
+    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($3);
+    node->addChild($4);
+    node->addChild($6);
+    $$ = node;
+}
 
 printf
 : PRINTF LP expr RP {
@@ -256,10 +264,22 @@ expr
     node->addChild($1);
     $$=node;
 }
+| INC IDENTIFIER {
+    TreeNode* node = new TreeNode($2->lineno,NODE_EXPR);
+    node->optype=OP_INC;
+    node->addChild($2);
+    $$=node;
+}
 | IDENTIFIER DEC {
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_DEC;
     node->addChild($1);
+    $$=node;
+}
+| DEC IDENTIFIER {
+    TreeNode* node = new TreeNode($2->lineno,NODE_EXPR);
+    node->optype=OP_DEC;
+    node->addChild($2);
     $$=node;
 }
 | expr ASSIGN expr {

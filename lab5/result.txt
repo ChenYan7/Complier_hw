@@ -1,3 +1,27 @@
+main:1
+a:2
+s:3
+a:2
+s:3
+ch:4
+ch:4
+a:2
+a:2
+a:2
+a:2
+a:2
+a:5
+a:5
+s:3
+a:5
+s:3
+s:3
+b:6
+b:6
+i:7
+i:7
+a:5
+i:7
 lno@0   @0      program    children: [ @1 ]    
 lno@4   @1      function    children: [ @2 @3 @4 @8 @11 @14 @17 @21 ]    
 lno@4   @2      type    type:void
@@ -66,17 +90,15 @@ lno@17   @64      variable    varname:b
 lno@18   @65      statement    children: [ @66 @67 ]    stmt:assign   op:=
 lno@18   @66      variable    varname:b
 lno@18   @67      const    type:int [var:10]
-lno@19   @68      statement    children: [ @69 @73 @76 @78 ]    stmt:for
+lno@19   @68      statement    children: [ @69 @73 @76 ]    stmt:for
 lno@19   @69      statement    children: [ @70 @71 @72 ]    stmt:declaration
 lno@19   @70      type    type:int
 lno@19   @71      variable    varname:i
 lno@19   @72      const    type:int [var:0]
 lno@19   @73      expr    children: [ @74 @75 ]    op:<
 lno@19   @74      variable    varname:i
-lno@19   @75      variable    varname:b
-lno@19   @76      expr    children: [ @77 ]    op:++
-lno@19   @77      variable    varname:i
-lno@20   @78      statement    children: [ @79 @80 @81 ]    stmt:printf
-lno@20   @79      const    type:string [var:"Have fun: %d\n"]
-lno@20   @80      const    type:char [var:d]
-lno@20   @81      variable    varname:i
+lno@19   @75      variable    varname:a
+lno@20   @76      statement    children: [ @77 @78 @79 ]    stmt:printf
+lno@20   @77      const    type:string [var:"Have fun: %d\n"]
+lno@20   @78      const    type:char [var:d]
+lno@20   @79      variable    varname:i
