@@ -3,7 +3,37 @@
 
 #include "pch.h"
 #include "type.h"
-#include "symboltable.h"
+#include "SymbolTable.h"
+#define layerNum 50
+#define layerDescNum 100
+struct layerNode;
+struct changeField;
+struct TreeNode;
+struct funcInfo;
+
+struct layerNode
+{
+    layerNode* prev;
+    layerNode* list[layerNum];
+    int layerDesc[layerDescNum];
+    int nodeCount;
+    int accessTime;
+    SymbolTableSection * section;
+};
+
+struct changeField
+{
+    int needChange;
+    int accessTime;
+};
+
+struct funcInfo{
+    TreeNode* return_value;
+    TreeNode* func_name;
+    TreeNode* decl_list;
+    TreeNode* func_body;
+    TreeNode* arg_list;
+};
 
 enum NodeType
 {
@@ -14,7 +44,10 @@ enum NodeType
 
     NODE_STMT,
     NODE_PROG,
-    NODE_FUNC,
+    NODE_BLOCK,//语句块
+    NODE_MAIN,//main函数
+    NODE_FUNC_DEF,//函数定义
+    NODE_FUNC_CALL,//函数调用
 };
 
 enum OperatorType
@@ -49,6 +82,7 @@ enum OperatorType
     OP_INC,
     OP_DEC,
     OP_COMMA,
+    OP_REF,
 };
 
 enum StmtType {
@@ -61,6 +95,8 @@ enum StmtType {
     STMT_RETURN,
     STMT_SCANF,
     STMT_PRINTF,
+    STMT_CONTINUE,
+    STMT_BREAK,
 }
 ;
 
@@ -73,9 +109,6 @@ public:
 
     TreeNode* child = nullptr;
     TreeNode* sibling = nullptr;
-
-    int child_num;
-    int sibling_num;
 
     void addChild(TreeNode*);
     void addSibling(TreeNode*);
@@ -97,12 +130,17 @@ public:
     bool b_val;
     string str_val;
     string var_name;
-    bool is_def;//若在定义语句中，is_def=1，否则为0 
+    layerNode* layer_node;
+    changeField change_field;
+    funcInfo* func_info;
+    int is_def;//是否是定义的变量
 
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);
     static string sType2String (StmtType type);
+    void change_Field(TreeNode* node);
+    void change_Child_Field(TreeNode* node);
 
 public:
     TreeNode(int lineno, NodeType type);

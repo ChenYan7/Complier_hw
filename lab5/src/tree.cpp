@@ -1,5 +1,6 @@
 #include "tree.h"
-static int node_num = 0;
+int node_num = 0;
+void printLayer(layerNode*node);
 
 void TreeNode::addChild(TreeNode* child) {
     if(this->child==nullptr)
@@ -9,7 +10,6 @@ void TreeNode::addChild(TreeNode* child) {
     else{
         this->child->addSibling(child);
     }
-    this->child_num += 1;
 }
 
 void TreeNode::addSibling(TreeNode* sibling){
@@ -21,19 +21,21 @@ void TreeNode::addSibling(TreeNode* sibling){
     {
         this->sibling->addSibling(sibling);
     }
-    this->sibling_num+=1;
 }
 
 TreeNode::TreeNode(int lineno, NodeType type) {
     this->lineno = lineno;
     this->nodeType = type;
-    this->child_num = 0;
-    this->sibling_num = 0;
+    this->layer_node=nullptr;
+    this->change_field.accessTime=0;
+    this->change_field.needChange=0;
 }
 
 void TreeNode::genNodeId() {
+    //cout<<node_num<<endl;
     this->nodeID = node_num;
-    node_num ++;
+    //cout<<this->lineno<<endl;
+    node_num++;
     if(this->child)
         this->child->genNodeId();
     if(this->sibling)
@@ -44,7 +46,8 @@ void TreeNode::printNodeInfo() {
     cout<<"lno@"<<this->lineno<<"   ";
     cout<<"@"<<this->nodeID<<"      ";
     cout<<this->nodeType2String(this->nodeType)<<"    ";
-    if(this->nodeType==NODE_PROG || this->nodeType==NODE_STMT || this->nodeType==NODE_EXPR || this->nodeType==NODE_FUNC)
+    if(this->nodeType==NODE_PROG || this->nodeType==NODE_STMT || this->nodeType==NODE_EXPR 
+        || this->nodeType==NODE_MAIN||this->nodeType==NODE_BLOCK||this->nodeType==NODE_FUNC_DEF||this->nodeType==NODE_FUNC_CALL)
     {
         cout<<"children: ";
         printChildrenId();
@@ -70,6 +73,7 @@ void TreeNode::printChildrenId() {
 
 void TreeNode::printAST() {
     this->printNodeInfo();
+    //cout<<this->nodeType2String(this->nodeType)<<endl;
     if(this->child)
         this->child->printAST();
     if(this->sibling)
@@ -92,7 +96,8 @@ void TreeNode::printSpecialInfo() {
                 cout<<" [var:"<<this->str_val<<"]";
             break;
         case NODE_VAR:
-            cout<<"varname:"<<this->var_name;
+            cout<<"varname:"<<this->var_name<<"     layer:";
+            printLayer(this->layer_node);
             break;
         case NODE_EXPR:
             cout<<"op:"<<this->opType2String(this->optype);
@@ -143,6 +148,12 @@ string TreeNode::sType2String(StmtType type) {
         case STMT_PRINTF:
             str = "printf";
             break;
+        case STMT_CONTINUE:
+            str = "continue";
+            break;
+        case STMT_BREAK:
+            str = "break";
+            break;
     }
     return str;
 }
@@ -170,8 +181,17 @@ string TreeNode::nodeType2String (NodeType type){
         case NODE_VAR:
             str = "variable";
             break;
-        case NODE_FUNC:
-            str = "function";
+        case NODE_BLOCK:
+            str = "statement block";
+            break;
+        case NODE_MAIN:
+            str = "main";
+            break;
+        case NODE_FUNC_CALL:
+            str = "function call";
+            break;
+        case NODE_FUNC_DEF:
+            str = "function definition";
             break;
         default:
             str = "?";
@@ -250,10 +270,83 @@ string TreeNode::opType2String (OperatorType type)
         case OP_COMMA:
             str = ",";
             break;
+        case OP_REF:
+            str = "&";
+            break;
         default:
             str = "??";
     }
     return str;
 }
 
+void TreeNode::change_Child_Field(TreeNode* node)
+{
+    if(node->child==nullptr)
+        return;
+    TreeNode*tmp=node->child;
+    while(tmp!=nullptr)
+    {
+        if(tmp->nodeType!=NODE_BLOCK)
+        {
+            tmp->layer_node=node->layer_node;
+            change_Child_Field(tmp);
+        }    
+        tmp=tmp->sibling;   
+    }
+}
+void TreeNode:: change_Field(TreeNode* node)
+{
+    if(node->change_field.needChange)
+    {
+        node->layer_node=node->layer_node->list[node->change_field.accessTime];
+        change_Child_Field(node);
+    }
+}
 
+layerNode* makeNode(layerNode* node)
+{
+    layerNode* temp = node->list[node->nodeCount]=new layerNode;
+    temp->nodeCount=0;
+    temp->prev=node;
+    temp->accessTime=0;
+    //process layerDesc
+    int flag=0;
+    for(int i=0;i<layerDescNum;i++)
+    {
+        if(node->layerDesc[i]!=-1)
+        {
+            temp->layerDesc[i]=node->layerDesc[i];
+            flag++;
+        }
+        else
+        {
+            temp->layerDesc[i]=-1;
+        }
+        
+    }
+    temp->layerDesc[flag]=node->nodeCount;
+    node->nodeCount++;
+    temp->section=new SymbolTableSection;
+    return temp;
+}
+
+void printLayer(layerNode*node)
+{
+    if(node==nullptr)
+    {
+        cout<<"null"<<"     ";
+        return ;
+    }
+    for(int i=0;i<layerDescNum&&node->layerDesc[i]!=-1;i++)
+    {
+        if(i+1<layerDescNum&&node->layerDesc[i+1]==-1)
+        {
+            cout<<node->layerDesc[i];
+        }
+        else
+        {   
+            cout<<node->layerDesc[i]<<"-";
+        }
+    }
+    cout<<"    ";
+}

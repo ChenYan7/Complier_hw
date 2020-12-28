@@ -79,7 +79,7 @@ extern int yydebug;
     NOT = 285,
     PRINTF = 286,
     SCANF = 287,
-    QUOTE = 288,
+    REFERENCE = 288,
     CONST = 289,
     SEMICOLON = 290,
     COMMA = 291,
@@ -92,14 +92,16 @@ extern int yydebug;
     IF = 298,
     RETURN = 299,
     FOR = 300,
-    IDENTIFIER = 301,
-    INTEGER = 302,
-    CHAR = 303,
-    BOOL = 304,
-    STRING = 305,
-    UMINUS = 306,
-    UADD = 307,
-    LOWER_THEN_ELSE = 308
+    CONTINUE = 301,
+    BREAK = 302,
+    IDENTIFIER = 303,
+    INTEGER = 304,
+    CHAR = 305,
+    BOOL = 306,
+    STRING = 307,
+    UMINUS = 308,
+    UADD = 309,
+    LOWER_THEN_ELSE = 310
   };
 #endif
 

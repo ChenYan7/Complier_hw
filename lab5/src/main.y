@@ -3,6 +3,8 @@
     #define YYSTYPE TreeNode * 
     TreeNode* root;
     extern int lineno;
+    layerNode* currentNode;
+    layerNode* layer_root;
     int yylex();
     int yyerror( char const * );
 %}
@@ -14,8 +16,9 @@
 %token EQ NEQ GQT LQT GT LT
 %token ADD SUB MUL DIV MODE INC DEC 
 %token AND OR NOT
-%token PRINTF SCANF QUOTE CONST
+%token PRINTF SCANF REFERENCE CONST
 %token SEMICOLON COMMA LP RP LC RC WHILE ELSE IF RETURN FOR
+%token CONTINUE BREAK
 %token IDENTIFIER INTEGER CHAR BOOL STRING
 
 %left COMMA
@@ -35,7 +38,10 @@
 %%
 
 program
-: statements {root = new TreeNode(0, NODE_PROG); root->addChild($1);}
+: statements {
+    root = new TreeNode(0, NODE_PROG); 
+    root->addChild($1);
+    root->layer_node=currentNode;}
 ;
 
 statements
@@ -44,81 +50,252 @@ statements
 ;
 
 statement
-: SEMICOLON  {$$ = new TreeNode(lineno, NODE_STMT); $$->stype = STMT_SKIP;}
+: SEMICOLON  {
+    $$ = new TreeNode($1->lineno, NODE_STMT); 
+    $$->stype = STMT_SKIP;
+    $$->layer_node=currentNode;}
 | declaration SEMICOLON {$$ = $1;}
-| expr SEMICOLON { $$ = $1;}
-| RETURN expr SEMICOLON {
-    TreeNode* node = new TreeNode(lineno,NODE_STMT);
-    node->stype = STMT_RETURN;
-    node->addChild($2);
-    $$ = node;
+| assignment_expr SEMICOLON{
+    $$ = $1;
 }
 | if_else {$$ = $1;}
-| while {$$ = $1;}
-| for {$$ = $1;}
-| scanf SEMICOLON {$$ = $1;}
-| printf SEMICOLON {$$ = $1;}
-| LC statements RC {$$ = $2;}
-| func_statement {$$ = $1;}
+| iteration_Stmt{
+    $$=$1;
+}
+| jump_Stmt {
+    $$=$1;
+}
+| compound_Stmt {$$=$1;}
+| printf SEMICOLON {$$=$1;}
+| scanf SEMICOLON {$$=$1;}
+| function_Definition{
+    $$=$1;
+}
+| function_Call{
+    $$=$1;
+}
 ;
 
-func_statement
-: T IDENTIFIER LP RP statement {
-    TreeNode* node = new TreeNode($1->lineno,NODE_FUNC);
+function_Call
+: IDENTIFIER LP id_list RP{
+    TreeNode* node = new TreeNode($1->lineno, NODE_FUNC_CALL); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->func_name=$1;
+    node->func_info->arg_list=$3;
+    node->addChild($1);
+    node->addChild($3);
+    setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $$=node;
+}
+| IDENTIFIER LP RP {
+    TreeNode* node = new TreeNode($1->lineno, NODE_FUNC_CALL); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->func_name=$1;
+    node->addChild($3);
+    setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $$=node;
+}
+;
+
+function_Definition
+: T IDENTIFIER LP declaration RP compound_Stmt{
+    TreeNode* node = new TreeNode($2->lineno, NODE_FUNC_DEF); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->return_value=$1;
+    node->func_info->func_name=$2;
+    node->func_info->decl_list=$4;
+    node->func_info->func_body=$6;
+    node->addChild($1);
+    node->addChild($2);
+    node->addChild($4);
+    node->addChild($6);
+    setProperty(currentNode->section,$2,PROPERTY_DEF);
+    setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    $$=node;
+}
+| T IDENTIFIER LP RP compound_Stmt{
+    TreeNode* node = new TreeNode($2->lineno, NODE_FUNC_DEF);
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->return_value=$1;
+    node->func_info->func_name=$2;
+    node->func_info->func_body=$5;
     node->addChild($1);
     node->addChild($2);
     node->addChild($5);
-    $$ = node;
+    setProperty(currentNode->section,$2,PROPERTY_DEF);
+    setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    $$=node; 
 }
+;
 
-
+compound_Stmt
+: LC statements RC{
+    TreeNode* node = new TreeNode($1->lineno, NODE_BLOCK); 
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    node->addChild($2);
+    $$=node;
+}
+| LC RC{
+    TreeNode* node = new TreeNode(lineno, NODE_BLOCK);
+    node->layer_node=currentNode; 
+    node->stype = STMT_SKIP;
+    $$=node;
+}
+;
 
 if_else
-: IF LP expr RP statement %prec LOWER_THEN_ELSE {
+: IF LP expr RP compound_Stmt %prec LOWER_THEN_ELSE {
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_IF;
     node->addChild($3);
     node->addChild($5);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$=node;
 }
-| IF LP expr RP statement ELSE statement {
+| IF LP expr RP compound_Stmt ELSE compound_Stmt {
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_IF;
     node->addChild($3);
     node->addChild($5);
     node->addChild($7);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$=node;
 }
 ;
 
-while
-: WHILE LP expr RP statement {
+iteration_Stmt
+: WHILE LP expr RP compound_Stmt {
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_WHILE;
     node->addChild($3);
     node->addChild($5);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$=node;
+}
+| FOR LP expr SEMICOLON expr SEMICOLON expr RP compound_Stmt {
+    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($3);
+    node->addChild($5);
+    node->addChild($7);
+    node->addChild($9);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP expr SEMICOLON expr SEMICOLON RP compound_Stmt {
+    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($3);
+    node->addChild($5);
+    node->addChild($8);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP expr SEMICOLON SEMICOLON expr RP compound_Stmt {
+    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($3);
+    node->addChild($6);
+    node->addChild($8);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP SEMICOLON expr SEMICOLON expr RP compound_Stmt {
+    TreeNode *node=new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($4);
+    node->addChild($6);
+    node->addChild($8);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP expr SEMICOLON SEMICOLON RP compound_Stmt {
+    TreeNode *node=new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($3);
+    node->addChild($7);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP SEMICOLON SEMICOLON expr RP compound_Stmt {
+    TreeNode *node=new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($5);
+    node->addChild($7);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP SEMICOLON expr SEMICOLON RP compound_Stmt {
+    TreeNode *node=new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($4);
+    node->addChild($7);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+| FOR LP SEMICOLON SEMICOLON RP compound_Stmt {
+    TreeNode *node=new TreeNode($1->lineno,NODE_STMT);
+    node->stype=STMT_FOR;
+    node->addChild($6);
+    node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
+    $$ = node;
+}
+
+jump_Stmt
+: CONTINUE SEMICOLON{
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype=STMT_CONTINUE;
+    node->layer_node=currentNode;
+    $$=node;
+}
+| BREAK SEMICOLON{
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype=STMT_BREAK;
+    node->layer_node=currentNode;
+    $$=node;
+}
+| RETURN expr SEMICOLON{
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype=STMT_RETURN;
+    node->layer_node=currentNode;
+    node->addChild($2);
+    $$=node;
+}
+| RETURN SEMICOLON{
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype=STMT_RETURN;
+    node->layer_node=currentNode;
     $$=node;
 }
 ;
-
-for
-: FOR LP statement statement expr RP statement {
-    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
-    node->stype=STMT_FOR;
-    node->addChild($3);
-    node->addChild($4);
-    node->addChild($5);
-    node->addChild($7);
-    $$ = node;
-}
-| FOR LP statement statement RP statement {
-    TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
-    node->stype=STMT_FOR;
-    node->addChild($3);
-    node->addChild($4);
-    node->addChild($6);
-    $$ = node;
-}
 
 printf
 : PRINTF LP expr RP {
@@ -211,12 +388,14 @@ io_list
 ;
 
 declaration
-: T IDENTIFIER ASSIGN expr{  // declare and init
+: T IDENTIFIER ASSIGN additive_expr{  // declare and init
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
     node->addChild($4);
+    node->layer_node=currentNode;
+    setProperty(currentNode->section,$2,PROPERTY_DEF);
     $$ = node;   
 } 
 | T id_list {
@@ -224,223 +403,305 @@ declaration
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
+    node->layer_node=currentNode;
+    //setProperty(currentNode->section,$2,PROPERTY_DEF);
     $$ = node;   
-}
-| CONST T IDENTIFIER ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
-    node->stype = STMT_DECL;
-    node->addChild($1);
-    node->addChild($2);
-    node->addChild($4);
-    $$ = node; 
 }
 ;
 
 id_list
-: IDENTIFIER {$$=$1;}
+: IDENTIFIER {$$=$1;setProperty(currentNode->section,$1,PROPERTY_DEF);}
 | id_list COMMA IDENTIFIER{
     $$=$1;
     $$->addSibling($3);
+    $$->layer_node=currentNode;
+    setProperty(currentNode->section,$3,PROPERTY_DEF);
 }
-
 
 expr
-: IDENTIFIER {
-    $$ = $1;
+: condition_expr {$$=$1;} //条件表达式
+| assignment_expr {$$=$1;} //赋值表达式
+| declaration {$$=$1;} //声明表达式
+;
+
+condition_expr
+: logical_or_expr{
+    $$=$1;
 }
-| QUOTE IDENTIFIER {$$=$2;}
-| INTEGER {
-    $$ = $1;
+;
+
+logical_or_expr
+: logical_and_expr{
+    $$=$1;
 }
-| CHAR {
-    $$ = $1;
-}
-| STRING {
-    $$ = $1;
-}
-| IDENTIFIER INC {
+| logical_or_expr OR logical_and_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_INC;
-    node->addChild($1);
-    $$=node;
-}
-| INC IDENTIFIER {
-    TreeNode* node = new TreeNode($2->lineno,NODE_EXPR);
-    node->optype=OP_INC;
-    node->addChild($2);
-    $$=node;
-}
-| IDENTIFIER DEC {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_DEC;
-    node->addChild($1);
-    $$=node;
-}
-| DEC IDENTIFIER {
-    TreeNode* node = new TreeNode($2->lineno,NODE_EXPR);
-    node->optype=OP_DEC;
-    node->addChild($2);
-    $$=node;
-}
-| expr ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
-    node->optype=OP_ASSIGN;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-}
-| expr ADD_ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
-    node->optype=OP_ADD_ASSIGN;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-}
-| expr SUB_ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
-    node->optype=OP_SUB_ASSIGN;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-}
-| expr MUL_ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
-    node->optype=OP_MUL_ASSIGN;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-}
-| expr DIV_ASSIGN expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_STMT);
-    node->stype=STMT_ASSIGN;
-    node->optype=OP_DIV_ASSIGN;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-}
-| expr ADD expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_ADD;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr SUB expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_SUB;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr MUL expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_MUL;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr DIV expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_DIV;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr MODE expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_MODE;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| SUB expr %prec UMINUS {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_SUB;
-    node->addChild($2);
-    $$ = node;
-}
-| ADD expr %prec UADD {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_ADD;
-    node->addChild($2);
-    $$ = node;
-}
-| TRUE {$$=$1;}
-| FALSE {$$=$1;}
-| expr AND expr {
-    TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_AND;
-    node->addChild($1);
-    node->addChild($3);
-    $$=node;
-} 
-| expr OR expr {
-    TreeNode *node=new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_OR;
     node->addChild($1);
     node->addChild($3);
-    $$=node;
-} 
-| NOT expr {
-    TreeNode *node=new TreeNode($2->lineno,NODE_EXPR);
-    node->optype=OP_NOT;
-    node->addChild($2);
-    $$=node;        
-}
-| expr EQ expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_EQ;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr NEQ expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_NEQ;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr GQT expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_GQT;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr LQT expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_LQT;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr GT expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_GT;
-    node->addChild($1);
-    node->addChild($3);
-    $$ = node;
-}
-| expr LT expr {
-    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
-    node->optype=OP_LT;
-    node->addChild($1);
-    node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 ;
 
+logical_and_expr
+: equality_expr{
+    $$=$1;
+}
+| logical_and_expr AND equality_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
+    node->optype=OP_AND;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
 
-T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;} 
-| T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
-| T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
-| T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_STRING;}
-| T_VOID {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_VOID;}
+equality_expr
+: relation_expr{
+    $$=$1;
+}
+| equality_expr EQ relation_expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_EQ;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| equality_expr NEQ relation_expr {
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
+    node->optype=OP_NEQ;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
+
+relation_expr
+: additive_expr{
+    $$=$1;
+}
+| relation_expr LT additive_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
+    node->optype=OP_LT;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| relation_expr LQT additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_LQT;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| relation_expr GT additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_GT;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| relation_expr GQT additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_GQT;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
+
+assignment_expr
+: unary_expr ASSIGN additive_expr{//有可能需要函数如 a=func()
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| unary_expr ADD_ASSIGN additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_ADD_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| unary_expr SUB_ASSIGN additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_SUB_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| unary_expr MUL_ASSIGN additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_MUL_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| unary_expr DIV_ASSIGN additive_expr{
+    TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
+    node->optype=OP_DIV_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
+
+additive_expr
+: mult_expr{
+    $$=$1;
+}
+| additive_expr ADD mult_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_ADD;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| additive_expr SUB mult_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_SUB;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
+
+mult_expr
+: cast_expr{
+    $$=$1;
+}
+| mult_expr MUL cast_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_MUL;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| mult_expr DIV cast_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_DIV;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| mult_expr MODE cast_expr{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_MODE;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+;
+
+cast_expr
+: unary_expr{
+    $$=$1;
+}
+
+unary_expr
+: postfix_expr{
+    $$=$1;//增加这一层是为了方便以后扩充
+}
+| SUB cast_expr{
+    TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_SUB;
+    node->addChild($2);
+    node->layer_node=currentNode;
+    $$=node;
+}
+| NOT cast_expr{
+    TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_NOT;
+    node->addChild($2);
+    node->layer_node=currentNode;
+    $$=node;
+}
+| REFERENCE cast_expr{
+    TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_REF;
+    node->addChild($2);
+    node->layer_node=currentNode;
+    $$=node;
+}
+;
+
+postfix_expr
+: primary_expr{
+    $$=$1;
+}
+| postfix_expr INC{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_INC;
+    node->addChild($1);
+    node->layer_node=currentNode;
+    $$=node;
+}
+| postfix_expr DEC{
+    TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
+    node->optype=OP_DEC;
+    node->addChild($2);
+    node->layer_node=currentNode;
+    $$=node;
+}
+;
+
+primary_expr
+: IDENTIFIER {
+    $$ = $1;
+}
+| paperConst{
+    $$=$1;
+}
+| LP expr RP{
+    $$=$2;
+}
+;
+
+paperConst
+: INTEGER {
+    $$ = $1;
+
+}
+| CHAR {
+    $$ = $1;
+
+}
+| STRING {
+    $$ = $1;
+
+}
+| BOOL {
+    $$=$1;
+
+}
+;
+
+
+T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;$$->layer_node=currentNode;} 
+| T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;$$->layer_node=currentNode;}
+| T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;$$->layer_node=currentNode;}
+| T_STRING {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_STRING;$$->layer_node=currentNode;}
+| T_VOID {$$ = new TreeNode(lineno,NODE_TYPE); $$->type = TYPE_VOID;$$->layer_node=currentNode;}
 ;
 
 %%

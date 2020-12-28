@@ -6,6 +6,10 @@
 int lineno=1;
 int count_c=0;
 
+extern layerNode* currentNode;
+extern layerNode* layer_root;
+extern layerNode* makeNode(layerNode* node);
+
 %}
 
 commentbegin "/*"
@@ -47,11 +51,11 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     return FALSE;
 }
 
-
 "while" return WHILE;
 "if" return IF;
 "else" return ELSE;
 "for" return FOR;
+
 "continue" return CONTINUE;
 "break" return BREAK;
 "return" return RETURN;
@@ -85,7 +89,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 "," return COMMA;
 ";" return SEMICOLON;
-"&" return QUOTE;
+"&" return REFERENCE;
 
 "++" return INC;
 "--" return DEC;
@@ -96,13 +100,17 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "%" return MODE;
 "(" return LP;
 ")" return RP;
-"{" return LC;
-"}" return RC;
+"{" {currentNode=makeNode(currentNode);
+    return LC;}
+"}" {currentNode=currentNode->prev;
+    currentNode->accessTime++;
+    return RC;}
 
 {INTEGER} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_INT;
     node->int_val = atoi(yytext);
+    node->layer_node=currentNode;
     yylval = node;
     return INTEGER;
 }
@@ -111,6 +119,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_CHAR;
     node->ch_val = yytext[1];
+    node->layer_node=currentNode;
     yylval = node;
     return CHAR;
 }
@@ -119,6 +128,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_STRING;
     node->str_val = yytext;
+    node->layer_node=currentNode;
     yylval = node;
     return STRING;
 }
@@ -126,7 +136,14 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {IDENTIFIER} {
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
+    node->layer_node=currentNode;
     yylval = node;
+    Item* item=new Item;
+    item->name=node->var_name;
+    item->symbol_type=SYMBOL_VAR;
+    item->symbol_property=PROPERTY_REFE;
+    item->tree_node=node;
+    currentNode->section->section_table.push_back(item);
     return IDENTIFIER;
 }
 

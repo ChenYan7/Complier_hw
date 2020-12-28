@@ -1,7 +1,11 @@
-/*
-I'm level 1 test.
-*/
-void main() {
+
+int f()
+{
+    int f=0;
+    return 0;
+}
+int gg;
+int main() {
     int a, s;
     a = 10;
     s = 0;
@@ -16,10 +20,14 @@ void main() {
             printf("result is: %d\n", s);
             int b;
             b = 10;
-            for(int i=0;i<a;) {
+            for(int i=0; i<b; i++) {
                 printf("Have fun: %d\n", i);
             }
         }
     }
 }
-// No more compilation error.
+int f1()
+{
+    int x=0;
+    return 0;
+}
