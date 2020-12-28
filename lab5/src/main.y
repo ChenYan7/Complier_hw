@@ -437,6 +437,7 @@ logical_or_expr
 | logical_or_expr OR logical_and_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_OR;
+    node->exprtype=EXPR_LOGICAL;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -450,6 +451,7 @@ logical_and_expr
 }
 | logical_and_expr AND equality_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
+    node->exprtype=EXPR_LOGICAL;
     node->optype=OP_AND;
     node->addChild($1);
     node->addChild($3);
@@ -465,6 +467,7 @@ equality_expr
 | equality_expr EQ relation_expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_EQ;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -473,6 +476,7 @@ equality_expr
 | equality_expr NEQ relation_expr {
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
     node->optype=OP_NEQ;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -487,6 +491,7 @@ relation_expr
 | relation_expr LT additive_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR );
     node->optype=OP_LT;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -495,6 +500,7 @@ relation_expr
 | relation_expr LQT additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_LQT;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -503,6 +509,7 @@ relation_expr
 | relation_expr GT additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_GT;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -511,6 +518,7 @@ relation_expr
 | relation_expr GQT additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_GQT;
+    node->exprtype=EXPR_RELATION;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -522,6 +530,7 @@ assignment_expr
 : unary_expr ASSIGN additive_expr{//有可能需要函数如 a=func()
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_ASSIGN;
+    node->exprtype=EXPR_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -530,6 +539,7 @@ assignment_expr
 | unary_expr ADD_ASSIGN additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_ADD_ASSIGN;
+    node->exprtype=EXPR_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -538,6 +548,7 @@ assignment_expr
 | unary_expr SUB_ASSIGN additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_SUB_ASSIGN;
+    node->exprtype=EXPR_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -546,6 +557,7 @@ assignment_expr
 | unary_expr MUL_ASSIGN additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_MUL_ASSIGN;
+    node->exprtype=EXPR_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -554,6 +566,7 @@ assignment_expr
 | unary_expr DIV_ASSIGN additive_expr{
     TreeNode* node = new TreeNode($1->lineno, NODE_EXPR);
     node->optype=OP_DIV_ASSIGN;
+    node->exprtype=EXPR_ASSIGN;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -568,6 +581,7 @@ additive_expr
 | additive_expr ADD mult_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_ADD;
+    node->exprtype=EXPR_ADDITIVE;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -576,6 +590,7 @@ additive_expr
 | additive_expr SUB mult_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_SUB;
+    node->exprtype=EXPR_ADDITIVE;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -590,6 +605,7 @@ mult_expr
 | mult_expr MUL cast_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_MUL;
+    node->exprtype=EXPR_ADDITIVE;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -598,6 +614,7 @@ mult_expr
 | mult_expr DIV cast_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_DIV;
+    node->exprtype=EXPR_ADDITIVE;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -606,6 +623,7 @@ mult_expr
 | mult_expr MODE cast_expr{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_MODE;
+    node->exprtype=EXPR_ADDITIVE;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
@@ -625,6 +643,7 @@ unary_expr
 | SUB cast_expr{
     TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_SUB;
+    node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
     $$=node;
@@ -632,6 +651,7 @@ unary_expr
 | NOT cast_expr{
     TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_NOT;
+    node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
     $$=node;
@@ -639,6 +659,7 @@ unary_expr
 | REFERENCE cast_expr{
     TreeNode* node=new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_REF;
+    node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
     $$=node;
@@ -652,6 +673,7 @@ postfix_expr
 | postfix_expr INC{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_INC;
+    node->exprtype=EXPR_POSTFIX;
     node->addChild($1);
     node->layer_node=currentNode;
     $$=node;
@@ -659,6 +681,7 @@ postfix_expr
 | postfix_expr DEC{
     TreeNode* node = new TreeNode($1->lineno,NODE_EXPR);
     node->optype=OP_DEC;
+    node->exprtype=EXPR_POSTFIX;
     node->addChild($2);
     node->layer_node=currentNode;
     $$=node;

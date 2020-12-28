@@ -98,6 +98,15 @@ enum StmtType {
     STMT_CONTINUE,
     STMT_BREAK,
 }
+
+enum ExprType {
+    EXPR_ADDITIVE,//算术表达式
+    EXPR_ASSIGN,//赋值
+    EXPR_LOGICAL,//逻辑
+    EXPR_RELATION,//关系
+    EXPR_POSTFIX,//后缀
+    EXPR_UNARY,//前缀
+}
 ;
 
 
@@ -109,6 +118,7 @@ public:
 
     TreeNode* child = nullptr;
     TreeNode* sibling = nullptr;
+    int child_num;
 
     void addChild(TreeNode*);
     void addSibling(TreeNode*);
@@ -125,6 +135,7 @@ public:
     OperatorType optype;  // 如果是表达式
     Type* type;  // 变量、类型、表达式结点，有类型。
     StmtType stype;
+    ExprType exprtype;
     int int_val;
     char ch_val;
     bool b_val;
@@ -141,6 +152,8 @@ public:
     static string sType2String (StmtType type);
     void change_Field(TreeNode* node);
     void change_Child_Field(TreeNode* node);
+    int check_type();//类型检查
+
 
 public:
     TreeNode(int lineno, NodeType type);

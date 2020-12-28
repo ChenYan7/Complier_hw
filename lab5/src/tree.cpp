@@ -10,6 +10,7 @@ void TreeNode::addChild(TreeNode* child) {
     else{
         this->child->addSibling(child);
     }
+    this->child_num++;
 }
 
 void TreeNode::addSibling(TreeNode* sibling){
@@ -26,6 +27,7 @@ void TreeNode::addSibling(TreeNode* sibling){
 TreeNode::TreeNode(int lineno, NodeType type) {
     this->lineno = lineno;
     this->nodeType = type;
+    this->child_num = 0;
     this->layer_node=nullptr;
     this->change_field.accessTime=0;
     this->change_field.needChange=0;
@@ -337,9 +339,9 @@ void printLayer(layerNode*node)
         cout<<"null"<<"     ";
         return ;
     }
-    for(int i=0;i<layerDescNum&&node->layerDesc[i]!=-1;i++)
+    for(int i=0;i<layerDescNum &&node->layerDesc[i]!=-1;i++)
     {
-        if(i+1<layerDescNum&&node->layerDesc[i+1]==-1)
+        if(i+1<layerDescNum &&node->layerDesc[i+1]==-1)
         {
             cout<<node->layerDesc[i];
         }
@@ -349,4 +351,99 @@ void printLayer(layerNode*node)
         }
     }
     cout<<"    ";
+}
+
+int TreeNode::check_type()
+{
+    if(this->nodeType==NODE_EXPR){
+        switch(this->exprtype){
+            case EXPR_ADDITIVE://两孩子均为整型
+                if(this->child->type==TYPE_INT && this->child->sibling->type==TYPE_INT){
+                    return 1;
+                }
+                else{
+                    cout<<"type error"<<endl;
+                    return 0;
+                }
+                break;
+            case EXPR_ASSIGN://孩子类型相同
+                if(this->child->type == this->child->sibling->type){
+                    return 1;
+                }
+                else{
+                    cout<<"type error"<<endl;
+                    return 0;
+                }
+                break;
+            case EXPR_LOGICAL://类型为bool型
+                switch(optype){
+                    case OP_NOT://单目运算
+                        if(this->child->type==TYPE_BOOL){
+                            return 1;
+                        }
+                        else{
+                            cout<<"type error"<<endl;
+                            return 0;
+                        }
+                        break;
+                    default:
+                        if(this->child->type==TYPE_BOOL && this->child->sibling->type==TYPE_BOOL){
+                            return 1;
+                        }
+                        else{
+                            cout<<"type error"<<endl;
+                            return 0;
+                        }
+                        break;
+                }
+                break;
+            case EXPR_RELATION://类型相同
+                if(this->child->type == this->child->sibling->type){
+                    return 1;
+                }
+                else{
+                    cout<<"type error"<<endl;
+                    return 0;
+                }
+                break;
+            case EXPR_POSTFIX://整型
+                if(this->child->type==TYPE_INT){
+                    return 1;
+                }
+                else{
+                    cout<<"type error"<<endl;
+                    return 0;
+                }
+                break;
+            case EXPR_UNARY:
+                if(this->child->type==TYPE_INT){
+                    return 1;
+                }
+                else{
+                    cout<<"type error"<<endl;
+                    return 0;
+                }
+                break;
+            default:
+                return 1;
+        }
+    }
+    if(this->nodeType==NODE_STMT){
+        switch(this->stype)
+        {
+        case STMT_WHILE://关系表达式、逻辑表达式
+            if(this->child->exprtype==EXPR_RELATION || this->child->exprtype==EXPR_LOGICAL){
+                return 1;
+            }
+            else return 0;
+        case STMT_IF://关系表达式
+            if(this->child->exprtype==EXPR_RELATION){
+                return 1;
+            }
+            else return 0;
+        case STMT_FOR://要考虑缺省情况
+            if(this->child_num==3){
+                
+            }
+    }
 }
