@@ -1,3 +1,22 @@
+expr_assign type error
+expr_assign type error
+expr_unary type error
+expr_relation type error
+expr_relation type error
+expr_logical type error
+expr_additive type error
+expr_relation type error
+expr_unary type error
+expr_relation type error
+expr_logical type error
+expr_logical type error
+expr_assign type error
+expr_assign type error
+expr_unary type error
+expr_unary type error
+expr_relation type error
+expr_assign type error
+expr_postfix type error
 lno@0   @0      program    children: [ @1 @11 @14 @100 ]    
 lno@2   @1      function definition    children: [ @2 @3 @4 ]    
 lno@2   @2      type    type:int
@@ -12,7 +31,7 @@ lno@5   @10      const    type:int [var:0]
 lno@7   @11      statement    children: [ @12 @13 ]    stmt:declaration
 lno@7   @12      type    type:int
 lno@7   @13      variable    varname:gg     layer:0    
-lno@8   @14      function definition    children: [ @15 @16 @17 ]    
+lno@8   @14      main    children: [ @15 @16 @17 ]    
 lno@8   @15      type    type:int
 lno@8   @16      variable    varname:main     layer:0    
 lno@8   @17      statement block    children: [ @18 @22 @25 @28 @31 @36 ]    
@@ -109,46 +128,76 @@ lno@31   @107      const    type:int [var:0]
 lno@31   @108      statement    children: [ @109 ]    stmt:return
 lno@32   @109      const    type:int [var:0]
 layer:0    
-symbol:  f    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_FUNC    
-symbol:  gg    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  main    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_FUNC    
-symbol:  f1    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_FUNC    
+symbolname:f    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_FUNC    
+symbolname:gg    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:main    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:f1    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_FUNC    
 
 layer:0-0    
-symbol:  f    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbolname:f    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
 layer:0-1    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  s    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  ch    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  ch    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:ch    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:ch    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0-0    
-symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  b    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  b    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  i    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  b    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0-0-0    
-symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
 layer:0-2    
-symbol:  x    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbolname:x    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
+varible redefined at line10
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line11
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line13
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line14
+varible redefined at line16
+varible redefined at line17
+varible redefined at line18
+varible redefined at line17
+varible redefined at line18
+varible redefined at line18
+varible redefined at line19
+varible redefined at line22
+varible redefined at line23
+varible redefined at line23
+varible redefined at line23
+varible redefined at line23
+varible redefined at line23

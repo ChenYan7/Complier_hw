@@ -7,6 +7,7 @@
     layerNode* layer_root;
     int yylex();
     int yyerror( char const * );
+    list<TreeNode*> func_def_list;//存储了所有函数定义的列表
 %}
 %start program
 
@@ -86,6 +87,12 @@ function_Call
     node->addChild($1);
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $1->type=TYPE_FUNC;
+    node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
+    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    {
+        cout<<"function called before define at line"<<$1->lineno<<endl;
+    }
     $$=node;
 }
 | IDENTIFIER LP RP {
@@ -95,6 +102,12 @@ function_Call
     node->func_info->func_name=$1;
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $1->type=TYPE_FUNC;
+    node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
+    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    {
+        cout<<"function called before define at line"<<$1->lineno<<endl;
+    }
     $$=node;
 }
 ;
@@ -108,26 +121,39 @@ function_Definition
     node->func_info->func_name=$2;
     node->func_info->decl_list=$4;
     node->func_info->func_body=$6;
+    node->func_info->func_def_loc=node;
     node->addChild($1);
     node->addChild($2);
     node->addChild($4);
     node->addChild($6);
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    $2->type=TYPE_FUNC;
+    $6->change_field.is_func_field=1;//用来将对应的layernode标识为函数体
+    func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     $$=node;
 }
 | T IDENTIFIER LP RP compound_Stmt{
-    TreeNode* node = new TreeNode($2->lineno, NODE_FUNC_DEF);
+    TreeNode* node;
+    if($2->var_name=="main"){
+        node = new TreeNode($2->lineno, NODE_MAIN);
+    }
+    else {
+        node = new TreeNode($2->lineno, NODE_FUNC_DEF);
+        node->func_info=new funcInfo;
+        node->func_info->return_value=$1;
+        node->func_info->func_name=$2;
+        node->func_info->func_body=$5;
+        setProperty(currentNode->section,$2,PROPERTY_DEF);
+        setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+        $2->type=TYPE_FUNC;
+        $5->change_field.is_func_field=1;//用来将对应的layernode标识为函数体
+        func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
+    }
     node->layer_node=currentNode;
-    node->func_info=new funcInfo;
-    node->func_info->return_value=$1;
-    node->func_info->func_name=$2;
-    node->func_info->func_body=$5;
     node->addChild($1);
     node->addChild($2);
     node->addChild($5);
-    setProperty(currentNode->section,$2,PROPERTY_DEF);
-    setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
     $$=node; 
 }
 ;
@@ -156,8 +182,7 @@ if_else
     node->addChild($3);
     node->addChild($5);
     node->layer_node=currentNode;
-    node->change_field.accessTime=currentNode->accessTime-1;
-    node->change_field.needChange=1;
+    node->check_type();
     $$=node;
 }
 | IF LP expr RP compound_Stmt ELSE compound_Stmt {
@@ -167,8 +192,7 @@ if_else
     node->addChild($5);
     node->addChild($7);
     node->layer_node=currentNode;
-    node->change_field.accessTime=currentNode->accessTime-1;
-    node->change_field.needChange=1;
+    node->check_type();
     $$=node;
 }
 ;
@@ -180,8 +204,7 @@ iteration_Stmt
     node->addChild($3);
     node->addChild($5);
     node->layer_node=currentNode;
-    node->change_field.accessTime=currentNode->accessTime-1;
-    node->change_field.needChange=1;
+    node->check_type();
     $$=node;
 }
 | FOR LP expr SEMICOLON expr SEMICOLON expr RP compound_Stmt {
@@ -194,6 +217,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP expr SEMICOLON expr SEMICOLON RP compound_Stmt {
@@ -205,6 +229,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP expr SEMICOLON SEMICOLON expr RP compound_Stmt {
@@ -216,6 +241,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP SEMICOLON expr SEMICOLON expr RP compound_Stmt {
@@ -227,6 +253,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP expr SEMICOLON SEMICOLON RP compound_Stmt {
@@ -237,6 +264,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP SEMICOLON SEMICOLON expr RP compound_Stmt {
@@ -247,6 +275,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP SEMICOLON expr SEMICOLON RP compound_Stmt {
@@ -257,6 +286,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 | FOR LP SEMICOLON SEMICOLON RP compound_Stmt {
@@ -266,6 +296,7 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    node->check_type();
     $$ = node;
 }
 
@@ -396,6 +427,8 @@ declaration
     node->addChild($4);
     node->layer_node=currentNode;
     setProperty(currentNode->section,$2,PROPERTY_DEF);
+    node->type=$1->type;
+    node->check_type();
     $$ = node;   
 } 
 | T id_list {
@@ -404,7 +437,7 @@ declaration
     node->addChild($1);
     node->addChild($2);
     node->layer_node=currentNode;
-    //setProperty(currentNode->section,$2,PROPERTY_DEF);
+    node->type=$1->type;
     $$ = node;   
 }
 ;
@@ -441,6 +474,8 @@ logical_or_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -456,6 +491,8 @@ logical_and_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -471,6 +508,8 @@ equality_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | equality_expr NEQ relation_expr {
@@ -480,6 +519,8 @@ equality_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -495,6 +536,8 @@ relation_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relation_expr LQT additive_expr{
@@ -504,6 +547,8 @@ relation_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relation_expr GT additive_expr{
@@ -513,6 +558,8 @@ relation_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relation_expr GQT additive_expr{
@@ -522,6 +569,8 @@ relation_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -534,6 +583,8 @@ assignment_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 | unary_expr ADD_ASSIGN additive_expr{
@@ -543,6 +594,8 @@ assignment_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 | unary_expr SUB_ASSIGN additive_expr{
@@ -552,6 +605,8 @@ assignment_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 | unary_expr MUL_ASSIGN additive_expr{
@@ -561,6 +616,8 @@ assignment_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 | unary_expr DIV_ASSIGN additive_expr{
@@ -570,6 +627,8 @@ assignment_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -585,6 +644,8 @@ additive_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$ = node;
 }
 | additive_expr SUB mult_expr{
@@ -594,6 +655,8 @@ additive_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -609,6 +672,8 @@ mult_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$ = node;
 }
 | mult_expr DIV cast_expr{
@@ -618,6 +683,8 @@ mult_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$ = node;
 }
 | mult_expr MODE cast_expr{
@@ -627,6 +694,8 @@ mult_expr
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -646,6 +715,8 @@ unary_expr
     node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$2->type;
+    node->check_type();
     $$=node;
 }
 | NOT cast_expr{
@@ -654,6 +725,8 @@ unary_expr
     node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$2->type;
+    node->check_type();
     $$=node;
 }
 | REFERENCE cast_expr{
@@ -662,6 +735,8 @@ unary_expr
     node->exprtype=EXPR_UNARY;
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$2->type;
+    node->check_type();
     $$=node;
 }
 ;
@@ -676,6 +751,8 @@ postfix_expr
     node->exprtype=EXPR_POSTFIX;
     node->addChild($1);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$=node;
 }
 | postfix_expr DEC{
@@ -684,6 +761,8 @@ postfix_expr
     node->exprtype=EXPR_POSTFIX;
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$1->type;
+    node->check_type();
     $$=node;
 }
 ;

@@ -27,6 +27,7 @@ public:
     SymbolType symbol_type;
     SymbolProperty symbol_property;
     TreeNode* tree_node;
+    TreeNode* def_pos;//当这个变量是一个引用变量时,指向引用的变量
 };
 
 struct SymbolTableSection{
@@ -41,6 +42,7 @@ public:
     list<SymbolTableSection*> symbol_table;
 };
 
+void check_symbol_table(SymbolTableSection* section);
 void copyLayerDesc(int* lay1,int* lay2);
 void setProperty(SymbolTableSection* section,TreeNode* tree_node,SymbolProperty type);
 void correctSymbol(layerNode*node);
@@ -48,3 +50,4 @@ void printSymbolTable(layerNode*node);
 void setSymbolType(SymbolTableSection* section,TreeNode* tree_node,SymbolType type);
 string SymbolProperty2String(SymbolProperty type);
 string SymbolType2String(SymbolType type);
+int assignRefSymbolType(layerNode*node,Item*item);

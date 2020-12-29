@@ -9,7 +9,7 @@ int count_c=0;
 extern layerNode* currentNode;
 extern layerNode* layer_root;
 extern layerNode* makeNode(layerNode* node);
-
+extern int assignRefSymbolType(layerNode*node,Item*);
 %}
 
 commentbegin "/*"
@@ -136,14 +136,17 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {IDENTIFIER} {
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
+    node->type=TYPE_VOID;//先定义为空类型
     node->layer_node=currentNode;
     yylval = node;
     Item* item=new Item;
     item->name=node->var_name;
     item->symbol_type=SYMBOL_VAR;
-    item->symbol_property=PROPERTY_REFE;
+    item->symbol_property=PROPERTY_DEF;
     item->tree_node=node;
+    item->def_pos = node;//先假设为自己
     currentNode->section->section_table.push_back(item);
+    assignRefSymbolType(currentNode,item);
     return IDENTIFIER;
 }
 

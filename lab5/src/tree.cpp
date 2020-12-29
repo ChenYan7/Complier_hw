@@ -31,6 +31,7 @@ TreeNode::TreeNode(int lineno, NodeType type) {
     this->layer_node=nullptr;
     this->change_field.accessTime=0;
     this->change_field.needChange=0;
+    this->change_field.is_func_field=0;
 }
 
 void TreeNode::genNodeId() {
@@ -296,15 +297,22 @@ void TreeNode::change_Child_Field(TreeNode* node)
         tmp=tmp->sibling;   
     }
 }
+
 void TreeNode:: change_Field(TreeNode* node)
 {
+    //进入下一层
     if(node->change_field.needChange)
     {
         node->layer_node=node->layer_node->list[node->change_field.accessTime];
         change_Child_Field(node);
     }
+    if(node->change_field.is_func_field)
+    {
+        node->layer_node->is_func=1;//表示这个layer_node是一个函数体的layer
+    }
 }
 
+//生成一个域节点
 layerNode* makeNode(layerNode* node)
 {
     layerNode* temp = node->list[node->nodeCount]=new layerNode;
@@ -353,6 +361,17 @@ void printLayer(layerNode*node)
     cout<<"    ";
 }
 
+//寻找函数定义位置
+TreeNode* findFuncDef(string func_name,list<TreeNode*> func_list)
+{
+    for(list<TreeNode*>::iterator i=func_list.begin();i!=func_list.end();i++)
+    {
+        if((*i)->func_info->func_name->var_name==func_name)
+            return *i;
+    }
+    return nullptr;
+}
+
 int TreeNode::check_type()
 {
     if(this->nodeType==NODE_EXPR){
@@ -362,16 +381,17 @@ int TreeNode::check_type()
                     return 1;
                 }
                 else{
-                    cout<<"type error"<<endl;
+                    cout<<"expr_additive type error"<<endl;
                     return 0;
                 }
                 break;
             case EXPR_ASSIGN://孩子类型相同
-                if(this->child->type == this->child->sibling->type){
+                //cout<<this->child->type->type<<" "<<this->child->sibling->type->type<<endl;
+                if(this->child->type->type == this->child->sibling->type->type){
                     return 1;
                 }
                 else{
-                    cout<<"type error"<<endl;
+                    cout<<"expr_assign type error"<<endl;
                     return 0;
                 }
                 break;
@@ -382,7 +402,7 @@ int TreeNode::check_type()
                             return 1;
                         }
                         else{
-                            cout<<"type error"<<endl;
+                            cout<<"expr_logical type error"<<endl;
                             return 0;
                         }
                         break;
@@ -391,18 +411,18 @@ int TreeNode::check_type()
                             return 1;
                         }
                         else{
-                            cout<<"type error"<<endl;
+                            cout<<"expr_logical type error"<<endl;
                             return 0;
                         }
                         break;
                 }
                 break;
             case EXPR_RELATION://类型相同
-                if(this->child->type == this->child->sibling->type){
+                if(this->child->type->type == this->child->sibling->type->type){
                     return 1;
                 }
                 else{
-                    cout<<"type error"<<endl;
+                    cout<<"expr_relation type error"<<endl;
                     return 0;
                 }
                 break;
@@ -411,7 +431,7 @@ int TreeNode::check_type()
                     return 1;
                 }
                 else{
-                    cout<<"type error"<<endl;
+                    cout<<"expr_postfix type error"<<endl;
                     return 0;
                 }
                 break;
@@ -420,7 +440,7 @@ int TreeNode::check_type()
                     return 1;
                 }
                 else{
-                    cout<<"type error"<<endl;
+                    cout<<"expr_unary type error"<<endl;
                     return 0;
                 }
                 break;
@@ -443,7 +463,36 @@ int TreeNode::check_type()
             else return 0;
         case STMT_FOR://要考虑缺省情况
             if(this->child_num==3){
-                
+                if((this->child->nodeType==NODE_STMT&&this->child->stype==STMT_DECL)||this->child->exprtype==EXPR_ASSIGN){
+                    if(this->child->sibling->exprtype==EXPR_RELATION){
+                        if(this->child->sibling->sibling->nodeType==NODE_EXPR){
+                            return 1;
+                        }
+                        else return 0;
+                    }
+                    else return 0;
+                }
+                else return 0;
             }
+            break;
+        }
     }
 }
+
+//检查变量的定义与重定义
+void check_section(layerNode* node)
+{
+    check_symbol_table(node->section);
+    for(int i=0;i<node->nodeCount;i++)
+    {
+        check_section(node->list[i]);
+    }
+}
+
+// //生成label
+// void TreeNode::gen_label(TreeNode* node){
+//     if(node==nullptr){
+//         return;
+//     }
+
+// }
