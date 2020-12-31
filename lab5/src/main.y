@@ -7,6 +7,7 @@
     layerNode* layer_root;
     int yylex();
     int yyerror( char const * );
+    list<string*> *str_list;
     list<TreeNode*> func_def_list;//存储了所有函数定义的列表
 %}
 %start program
@@ -137,9 +138,16 @@ function_Definition
     TreeNode* node;
     if($2->var_name=="main"){
         node = new TreeNode($2->lineno, NODE_MAIN);
+        node->layer_node=currentNode;
+        node->addChild($1);
+        node->addChild($5);
     }
     else {
         node = new TreeNode($2->lineno, NODE_FUNC_DEF);
+        node->layer_node=currentNode;
+        node->addChild($1);
+        node->addChild($2);
+        node->addChild($5);
         node->func_info=new funcInfo;
         node->func_info->return_value=$1;
         node->func_info->func_name=$2;
@@ -150,10 +158,6 @@ function_Definition
         $5->change_field.is_func_field=1;//用来将对应的layernode标识为函数体
         func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     }
-    node->layer_node=currentNode;
-    node->addChild($1);
-    node->addChild($2);
-    node->addChild($5);
     $$=node; 
 }
 ;
@@ -232,6 +236,7 @@ iteration_Stmt
     node->check_type();
     $$ = node;
 }
+/*
 | FOR LP expr SEMICOLON SEMICOLON expr RP compound_Stmt {
     TreeNode *node=new TreeNode($3->lineno,NODE_STMT);
     node->stype=STMT_FOR;
@@ -298,7 +303,7 @@ iteration_Stmt
     node->change_field.needChange=1;
     node->check_type();
     $$ = node;
-}
+}*/
 
 jump_Stmt
 : CONTINUE SEMICOLON{
@@ -427,16 +432,30 @@ declaration
     node->addChild($4);
     node->layer_node=currentNode;
     setProperty(currentNode->section,$2,PROPERTY_DEF);
+    $2->type=$1->type;
     node->type=$1->type;
     node->check_type();
     $$ = node;   
 } 
-| T id_list {
+| declaration COMMA IDENTIFIER {
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_DECL;
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    setProperty(currentNode->section,$3,PROPERTY_DEF);
+    $3->type=$1->type;
+    node->type=$1->type;
+    $$ = node;   
+}
+| T IDENTIFIER{
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
     node->layer_node=currentNode;
+    setProperty(currentNode->section,$2,PROPERTY_DEF);
+    $2->type=$1->type;
     node->type=$1->type;
     $$ = node;   
 }
@@ -448,7 +467,6 @@ id_list
     $$=$1;
     $$->addSibling($3);
     $$->layer_node=currentNode;
-    setProperty(currentNode->section,$3,PROPERTY_DEF);
 }
 
 expr

@@ -6,6 +6,7 @@ extern FILE *yyin;
 extern int yyparse();
 extern layerNode* currentNode;
 extern layerNode* layer_root;
+extern list<string*>*str_list;
 using namespace std;
 int main(int argc, char *argv[])
 {
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
             cerr << "failed to open file: " << argv[1] << endl;
         }
     }
+    str_list=new list<string*>;
     currentNode=new layerNode;
     currentNode->prev=NULL;
     layer_root=currentNode;
@@ -39,9 +41,11 @@ int main(int argc, char *argv[])
     if(root != NULL) {
         root->genNodeId();
         correctSymbol(layer_root);
-        root->printAST();
-        printSymbolTable(layer_root);
+        //root->printAST();
+        //printSymbolTable(layer_root);
         check_section(layer_root);
+        root->gen_label(root);
+        root->print_label(root, str_list);
     }
     return 0;
 }

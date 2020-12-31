@@ -1,136 +1,116 @@
-expr_assign type error
-expr_assign type error
-expr_unary type error
-expr_relation type error
-expr_relation type error
-expr_logical type error
-expr_additive type error
-expr_relation type error
-expr_unary type error
-expr_relation type error
-expr_logical type error
-expr_logical type error
-expr_assign type error
-expr_assign type error
-expr_unary type error
-expr_unary type error
-expr_relation type error
-expr_assign type error
-expr_postfix type error
 lno@0   @0      program    children: [ @1 @11 @14 @100 ]    
-lno@2   @1      function definition    children: [ @2 @3 @4 ]    
-lno@2   @2      type    type:int
-lno@2   @3      variable    varname:f     layer:0    
-lno@2   @4      statement block    children: [ @5 @9 ]    
-lno@4   @5      statement    children: [ @6 @7 @8 ]    stmt:declaration
-lno@4   @6      type    type:int
-lno@4   @7      variable    varname:f     layer:0-0    
-lno@4   @8      const    type:int [var:0]
-lno@4   @9      statement    children: [ @10 ]    stmt:return
-lno@5   @10      const    type:int [var:0]
-lno@7   @11      statement    children: [ @12 @13 ]    stmt:declaration
-lno@7   @12      type    type:int
-lno@7   @13      variable    varname:gg     layer:0    
-lno@8   @14      main    children: [ @15 @16 @17 ]    
-lno@8   @15      type    type:int
-lno@8   @16      variable    varname:main     layer:0    
-lno@8   @17      statement block    children: [ @18 @22 @25 @28 @31 @36 ]    
-lno@9   @18      statement    children: [ @19 @20 @21 ]    stmt:declaration
-lno@9   @19      type    type:int
-lno@9   @20      variable    varname:a     layer:0-1    
-lno@9   @21      variable    varname:s     layer:0-1    
-lno@10   @22      expr    children: [ @23 @24 ]    op:=
-lno@10   @23      variable    varname:a     layer:0-1    
-lno@10   @24      const    type:int [var:10]
-lno@11   @25      expr    children: [ @26 @27 ]    op:=
-lno@11   @26      variable    varname:s     layer:0-1    
-lno@11   @27      const    type:int [var:0]
-lno@12   @28      statement    children: [ @29 @30 ]    stmt:declaration
-lno@12   @29      type    type:char
-lno@12   @30      variable    varname:ch     layer:0-1    
-lno@13   @31      statement    children: [ @32 @33 @34 ]    stmt:scanf
-lno@13   @32      const    type:string [var:"%d"]
-lno@13   @33      const    type:char [var:d]
-lno@13   @34      expr    children: [ @35 ]    op:&
-lno@13   @35      variable    varname:ch     layer:0-1    
-lno@14   @36      statement    children: [ @37 @55 ]    stmt:while
-lno@14   @37      expr    children: [ @38 @45 ]    op:||
-lno@14   @38      expr    children: [ @39 @42 ]    op:&&
-lno@14   @39      expr    children: [ @40 @41 ]    op:>
-lno@14   @40      variable    varname:a     layer:0-1    
-lno@14   @41      const    type:int [var:0]
-lno@14   @42      expr    children: [ @43 @44 ]    op:<=
-lno@14   @43      variable    varname:a     layer:0-1    
-lno@14   @44      const    type:int [var:10]
-lno@14   @45      expr    children: [ @46 @51 ]    op:&&
-lno@14   @46      expr    children: [ @47 @50 ]    op:==
-lno@14   @47      expr    children: [ @48 @49 ]    op:%
-lno@14   @48      variable    varname:a     layer:0-1    
-lno@14   @49      const    type:int [var:100]
-lno@14   @50      const    type:int [var:10]
-lno@14   @51      expr    children: [ @52 @54 ]    op:==
-lno@14   @52      expr    children: [ @53 ]    op:!
-lno@14   @53      variable    varname:a     layer:0-1    
-lno@14   @54      const    type:int [var:10]
-lno@14   @55      statement block    children: [ @56 @59 @62 @65 @68 ]    
-lno@15   @56      expr    children: [ @57 @58 ]    op:-=
-lno@15   @57      variable    varname:a     layer:0-1-0    
-lno@15   @58      const    type:int [var:1]
-lno@16   @59      statement    children: [ @60 @61 ]    stmt:declaration
-lno@16   @60      type    type:int
-lno@16   @61      variable    varname:a     layer:0-1-0    
-lno@17   @62      expr    children: [ @63 @64 ]    op:=
-lno@17   @63      variable    varname:a     layer:0-1-0    
-lno@17   @64      const    type:int [var:10]
-lno@18   @65      expr    children: [ @66 @67 ]    op:+=
-lno@18   @66      variable    varname:s     layer:0-1-0    
-lno@18   @67      variable    varname:a     layer:0-1-0    
-lno@18   @68      statement    children: [ @69 @74 ]    stmt:if
-lno@18   @69      expr    children: [ @70 @72 ]    op:<
-lno@18   @70      expr    children: [ @71 ]    op:-
-lno@19   @71      variable    varname:s     layer:0-1-0    
-lno@19   @72      expr    children: [ @73 ]    op:-
-lno@19   @73      const    type:int [var:10]
-lno@19   @74      statement block    children: [ @75 @79 @82 @85 ]    
-lno@20   @75      statement    children: [ @76 @77 @78 ]    stmt:printf
-lno@20   @76      const    type:string [var:"result is: %d\n"]
-lno@20   @77      const    type:char [var:d]
-lno@20   @78      variable    varname:s     layer:0-1-0-0    
-lno@21   @79      statement    children: [ @80 @81 ]    stmt:declaration
-lno@21   @80      type    type:int
-lno@21   @81      variable    varname:b     layer:0-1-0-0    
-lno@22   @82      expr    children: [ @83 @84 ]    op:=
-lno@22   @83      variable    varname:b     layer:0-1-0-0    
-lno@22   @84      const    type:int [var:10]
-lno@23   @85      statement    children: [ @86 @90 @93 @95 ]    stmt:for
-lno@23   @86      statement    children: [ @87 @88 @89 ]    stmt:declaration
-lno@23   @87      type    type:int
-lno@23   @88      variable    varname:i     layer:0-1-0-0    
-lno@23   @89      const    type:int [var:0]
-lno@23   @90      expr    children: [ @91 @92 ]    op:<
-lno@23   @91      variable    varname:i     layer:0-1-0-0    
-lno@23   @92      variable    varname:b     layer:0-1-0-0    
-lno@23   @93      expr    children: [ @94 ]    op:++
-lno@23   @94      variable    varname:i     layer:0-1-0-0    
-lno@23   @95      statement block    children: [ @96 ]    
-lno@24   @96      statement    children: [ @97 @98 @99 ]    stmt:printf
-lno@24   @97      const    type:string [var:"Have fun: %d\n"]
-lno@24   @98      const    type:char [var:d]
-lno@24   @99      variable    varname:i     layer:0-1-0-0-0    
-lno@29   @100      function definition    children: [ @101 @102 @103 ]    
-lno@29   @101      type    type:int
-lno@29   @102      variable    varname:f1     layer:0    
-lno@29   @103      statement block    children: [ @104 @108 ]    
-lno@31   @104      statement    children: [ @105 @106 @107 ]    stmt:declaration
-lno@31   @105      type    type:int
-lno@31   @106      variable    varname:x     layer:0-2    
-lno@31   @107      const    type:int [var:0]
-lno@31   @108      statement    children: [ @109 ]    stmt:return
-lno@32   @109      const    type:int [var:0]
+lno@1   @1      function definition    children: [ @2 @3 @4 ]    
+lno@1   @2      type    type:int
+lno@1   @3      variable    varname:f     layer:0    
+lno@1   @4      statement block    children: [ @5 @9 ]    
+lno@3   @5      statement    children: [ @6 @7 @8 ]    stmt:declaration
+lno@3   @6      type    type:int
+lno@3   @7      variable    varname:f     layer:0-0    
+lno@3   @8      const    type:int [var:0]
+lno@3   @9      statement    children: [ @10 ]    stmt:return
+lno@4   @10      const    type:int [var:0]
+lno@6   @11      statement    children: [ @12 @13 ]    stmt:declaration
+lno@6   @12      type    type:int
+lno@6   @13      variable    varname:gg     layer:0    
+lno@7   @14      main    children: [ @15 @16 ]    
+lno@7   @15      type    type:int
+lno@7   @16      statement block    children: [ @17 @22 @25 @28 @31 @36 ]    
+lno@8   @17      statement    children: [ @18 @21 ]    stmt:declaration
+lno@8   @18      statement    children: [ @19 @20 ]    stmt:declaration
+lno@8   @19      type    type:int
+lno@8   @20      variable    varname:a     layer:0-1    
+lno@8   @21      variable    varname:s     layer:0-1    
+lno@9   @22      expr    children: [ @23 @24 ]    op:=
+lno@9   @23      variable    varname:a     layer:0-1    
+lno@9   @24      const    type:int [var:10]
+lno@10   @25      expr    children: [ @26 @27 ]    op:=
+lno@10   @26      variable    varname:s     layer:0-1    
+lno@10   @27      const    type:int [var:0]
+lno@11   @28      statement    children: [ @29 @30 ]    stmt:declaration
+lno@11   @29      type    type:char
+lno@11   @30      variable    varname:ch     layer:0-1    
+lno@12   @31      statement    children: [ @32 @33 @34 ]    stmt:scanf
+lno@12   @32      const    type:string [var:"%d"]
+lno@12   @33      const    type:char [var:d]
+lno@12   @34      expr    children: [ @35 ]    op:&
+lno@12   @35      variable    varname:ch     layer:0-1    
+lno@13   @36      statement    children: [ @37 @55 ]    stmt:while
+lno@13   @37      expr    children: [ @38 @45 ]    op:||
+lno@13   @38      expr    children: [ @39 @42 ]    op:&&
+lno@13   @39      expr    children: [ @40 @41 ]    op:>
+lno@13   @40      variable    varname:a     layer:0-1    
+lno@13   @41      const    type:int [var:0]
+lno@13   @42      expr    children: [ @43 @44 ]    op:<=
+lno@13   @43      variable    varname:a     layer:0-1    
+lno@13   @44      const    type:int [var:10]
+lno@13   @45      expr    children: [ @46 @51 ]    op:&&
+lno@13   @46      expr    children: [ @47 @50 ]    op:==
+lno@13   @47      expr    children: [ @48 @49 ]    op:%
+lno@13   @48      variable    varname:a     layer:0-1    
+lno@13   @49      const    type:int [var:100]
+lno@13   @50      const    type:int [var:10]
+lno@13   @51      expr    children: [ @52 @54 ]    op:==
+lno@13   @52      expr    children: [ @53 ]    op:!
+lno@13   @53      variable    varname:a     layer:0-1    
+lno@13   @54      const    type:int [var:10]
+lno@13   @55      statement block    children: [ @56 @59 @62 @65 @68 ]    
+lno@14   @56      expr    children: [ @57 @58 ]    op:-=
+lno@14   @57      variable    varname:a     layer:0-1-0    
+lno@14   @58      const    type:int [var:1]
+lno@15   @59      statement    children: [ @60 @61 ]    stmt:declaration
+lno@15   @60      type    type:int
+lno@15   @61      variable    varname:a     layer:0-1-0    
+lno@16   @62      expr    children: [ @63 @64 ]    op:=
+lno@16   @63      variable    varname:a     layer:0-1-0    
+lno@16   @64      const    type:int [var:10]
+lno@17   @65      expr    children: [ @66 @67 ]    op:+=
+lno@17   @66      variable    varname:s     layer:0-1-0    
+lno@17   @67      variable    varname:a     layer:0-1-0    
+lno@17   @68      statement    children: [ @69 @74 ]    stmt:if
+lno@17   @69      expr    children: [ @70 @72 ]    op:<
+lno@17   @70      expr    children: [ @71 ]    op:-
+lno@18   @71      variable    varname:s     layer:0-1-0    
+lno@18   @72      expr    children: [ @73 ]    op:-
+lno@18   @73      const    type:int [var:10]
+lno@18   @74      statement block    children: [ @75 @79 @82 @85 ]    
+lno@19   @75      statement    children: [ @76 @77 @78 ]    stmt:printf
+lno@19   @76      const    type:string [var:"result is: %d\n"]
+lno@19   @77      const    type:char [var:d]
+lno@19   @78      variable    varname:s     layer:0-1-0-0    
+lno@20   @79      statement    children: [ @80 @81 ]    stmt:declaration
+lno@20   @80      type    type:int
+lno@20   @81      variable    varname:b     layer:0-1-0-0    
+lno@21   @82      expr    children: [ @83 @84 ]    op:=
+lno@21   @83      variable    varname:b     layer:0-1-0-0    
+lno@21   @84      const    type:int [var:10]
+lno@22   @85      statement    children: [ @86 @90 @93 @95 ]    stmt:for
+lno@22   @86      statement    children: [ @87 @88 @89 ]    stmt:declaration
+lno@22   @87      type    type:int
+lno@22   @88      variable    varname:i     layer:0-1-0-0    
+lno@22   @89      const    type:int [var:0]
+lno@22   @90      expr    children: [ @91 @92 ]    op:<
+lno@22   @91      variable    varname:i     layer:0-1-0-0    
+lno@22   @92      variable    varname:b     layer:0-1-0-0    
+lno@22   @93      expr    children: [ @94 ]    op:++
+lno@22   @94      variable    varname:i     layer:0-1-0-0    
+lno@22   @95      statement block    children: [ @96 ]    
+lno@23   @96      statement    children: [ @97 @98 @99 ]    stmt:printf
+lno@23   @97      const    type:string [var:"Have fun: %d\n"]
+lno@23   @98      const    type:char [var:d]
+lno@23   @99      variable    varname:i     layer:0-1-0-0-0    
+lno@28   @100      function definition    children: [ @101 @102 @103 ]    
+lno@28   @101      type    type:int
+lno@28   @102      variable    varname:f1     layer:0    
+lno@28   @103      statement block    children: [ @104 @108 ]    
+lno@30   @104      statement    children: [ @105 @106 @107 ]    stmt:declaration
+lno@30   @105      type    type:int
+lno@30   @106      variable    varname:x     layer:0-2    
+lno@30   @107      const    type:int [var:0]
+lno@30   @108      statement    children: [ @109 ]    stmt:return
+lno@31   @109      const    type:int [var:0]
 layer:0    
 symbolname:f    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_FUNC    
 symbolname:gg    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:main    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 symbolname:f1    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_FUNC    
 
 layer:0-0    
@@ -139,65 +119,41 @@ symbolname:f    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR
 layer:0-1    
 symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 symbolname:ch    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:ch    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:ch    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:a    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:a    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0-0    
-symbolname:s    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:s    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:b    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:b    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
-symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:b    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 
 layer:0-1-0-0-0    
-symbolname:i    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
+symbolname:i    ref_or_def:PROPERTY_REFE     symbol_type:SYMBOL_VAR    
 
 layer:0-2    
 symbolname:x    ref_or_def:PROPERTY_DEF     symbol_type:SYMBOL_VAR    
 
-varible redefined at line10
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line11
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line13
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line14
-varible redefined at line16
-varible redefined at line17
-varible redefined at line18
-varible redefined at line17
-varible redefined at line18
-varible redefined at line18
-varible redefined at line19
-varible redefined at line22
-varible redefined at line23
-varible redefined at line23
-varible redefined at line23
-varible redefined at line23
-varible redefined at line23
+decl_begin11
+
+decl_next11
+
+label_main_next14
+

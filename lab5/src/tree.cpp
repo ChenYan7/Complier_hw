@@ -377,11 +377,11 @@ int TreeNode::check_type()
     if(this->nodeType==NODE_EXPR){
         switch(this->exprtype){
             case EXPR_ADDITIVE://两孩子均为整型
-                if(this->child->type==TYPE_INT && this->child->sibling->type==TYPE_INT){
+                if(this->child->type->type==TYPE_INT->type && this->child->sibling->type->type==TYPE_INT->type){
                     return 1;
                 }
                 else{
-                    cout<<"expr_additive type error"<<endl;
+                    cout<<"expr_additive type error at line "<<this->lineno<<endl;
                     return 0;
                 }
                 break;
@@ -391,27 +391,27 @@ int TreeNode::check_type()
                     return 1;
                 }
                 else{
-                    cout<<"expr_assign type error"<<endl;
+                    cout<<"expr_assign type error at line "<<this->lineno<<endl;
                     return 0;
                 }
                 break;
             case EXPR_LOGICAL://类型为bool型
                 switch(optype){
                     case OP_NOT://单目运算
-                        if(this->child->type==TYPE_BOOL){
+                        if(this->child->type->type==TYPE_BOOL->type){
                             return 1;
                         }
                         else{
-                            cout<<"expr_logical type error"<<endl;
+                            cout<<"expr_logical type error at line "<<this->lineno<<endl;
                             return 0;
                         }
                         break;
                     default:
-                        if(this->child->type==TYPE_BOOL && this->child->sibling->type==TYPE_BOOL){
+                        if(this->child->type->type==TYPE_BOOL->type && this->child->sibling->type->type==TYPE_BOOL->type){
                             return 1;
                         }
                         else{
-                            cout<<"expr_logical type error"<<endl;
+                            cout<<"expr_logical type error at line "<<this->lineno<<endl;
                             return 0;
                         }
                         break;
@@ -422,25 +422,29 @@ int TreeNode::check_type()
                     return 1;
                 }
                 else{
-                    cout<<"expr_relation type error"<<endl;
+                    cout<<"expr_relation type error at line "<<this->lineno<<endl;
                     return 0;
                 }
                 break;
             case EXPR_POSTFIX://整型
-                if(this->child->type==TYPE_INT){
+                if(this->child->type->type==TYPE_INT->type){
                     return 1;
                 }
                 else{
-                    cout<<"expr_postfix type error"<<endl;
+                    cout<<"expr_postfix type error at line "<<this->lineno<<endl;
                     return 0;
                 }
                 break;
             case EXPR_UNARY:
-                if(this->child->type==TYPE_INT){
+                if(this->optype==OP_NOT && (this->child->type->type==TYPE_BOOL->type||this->child->nodeType==NODE_VAR)){
                     return 1;
                 }
+                if(this->optype==OP_REF && this->child->nodeType==NODE_VAR)
+                    return 1;
+                if(this->optype==OP_SUB && this->child->type->type==TYPE_INT->type)
+                    return 1;
                 else{
-                    cout<<"expr_unary type error"<<endl;
+                    cout<<"expr_unary type error at line "<<this->lineno<<endl;
                     return 0;
                 }
                 break;
@@ -461,7 +465,7 @@ int TreeNode::check_type()
                 return 1;
             }
             else return 0;
-        case STMT_FOR://要考虑缺省情况
+        case STMT_FOR://要考虑缺省情况，只分为三个都有和最后一个缺省两种情况
             if(this->child_num==3){
                 if((this->child->nodeType==NODE_STMT&&this->child->stype==STMT_DECL)||this->child->exprtype==EXPR_ASSIGN){
                     if(this->child->sibling->exprtype==EXPR_RELATION){
@@ -469,6 +473,15 @@ int TreeNode::check_type()
                             return 1;
                         }
                         else return 0;
+                    }
+                    else return 0;
+                }
+                else return 0;
+            }
+            if(this->child_num==2){
+                if((this->child->nodeType==NODE_STMT&&this->child->stype==STMT_DECL)||this->child->exprtype==EXPR_ASSIGN){
+                    if(this->child->sibling->exprtype==EXPR_RELATION){
+                        return 1;
                     }
                     else return 0;
                 }
@@ -489,10 +502,298 @@ void check_section(layerNode* node)
     }
 }
 
-// //生成label
-// void TreeNode::gen_label(TreeNode* node){
-//     if(node==nullptr){
-//         return;
-//     }
+//生成label
+void TreeNode::gen_label(TreeNode* node){
+    if(node==nullptr){
+        return;
+    }
+    int flag=0;
+    if(node->nodeType==NODE_PROG)
+    {
+        flag=1;
+    }
+    else if(node->nodeType==NODE_MAIN)
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("label_main_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("label_main_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        node->child->sibling->label.begin_label=node->label.next_label;//main函数入口的话应该是孩子的开始是爹的next
+    }
+    else if(node->nodeType==NODE_STMT && node->stype==STMT_IF)//if
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("label_if_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("label_if_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        if(this->child_num==2)//没有else
+        {
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //if条件的true_label即为if语句块的begin
+            node->child->label.true_label=node->child->sibling->label.begin_label=new string("label_if_true");
+            *node->child->label.true_label+=to_string(node->child->nodeID);
+            //if为真语句块的next即为if的next
+            node->child->sibling->label.next_label=node->label.next_label;
+            //if条件的false_label即为if语句块的next
+            node->child->label.false_label=node->label.next_label;
+        }
+        else if(this->child_num==3)//有else
+        {
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //if条件的true_label即为if语句块的begin
+            node->child->label.true_label=node->child->sibling->label.begin_label=new string("label_if_true");
+            *node->child->label.true_label+=to_string(node->child->nodeID);
+            //if条件的false_label即为else语句块的begin
+            node->child->label.false_label=node->child->sibling->sibling->label.begin_label=new string("label_if_false");
+            *node->child->label.false_label+=to_string(node->child->nodeID);
+            //if为真语句块的next即为if的next
+            node->child->sibling->label.next_label=node->label.next_label;
+            //if为假语句块的next即为if的next
+            node->child->sibling->sibling->label.next_label=node->label.next_label;
+        }
+    }
+    else if(node->nodeType==NODE_STMT && node->stype==STMT_DECL)//定义语句
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("decl_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("decl_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_EXPR && node->exprtype==EXPR_ASSIGN)//赋值语句不带逗号
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("assign_expr_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("assign_expr_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_STMT && node->stype==STMT_WHILE)//while语句
+    {
+        flag=1;
+        TreeNode*condition=node->child;
+        TreeNode*loop_body=node->child->sibling;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("while_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("while_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+        //循环体的下一条语句————循环的开始(继续循环)
+        loop_body->label.next_label=node->label.begin_label;
+        //循环体的开始标号即为循环条件的真值的标号
+        loop_body->label.begin_label=condition->label.true_label=new string("while_body_begin"+to_string(loop_body->nodeID));
+        //循环条件的假值标号即为循环的下一条语句标号
+        condition->label.false_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_STMT && node->stype==STMT_FOR && node->child_num==3)
+    {
+        TreeNode*condition=node->child->sibling;
+        TreeNode*prev=node->child;
+        TreeNode*after=node->child->sibling->sibling;
+        TreeNode*loop_body=node->child->sibling->sibling->sibling;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("for_e_e_e_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("for_e_e_e_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+        //for循环第一个位置的begin即为for节点的begin
+        prev->label.begin_label=node->label.begin_label;
+        //for循环第一个位置的next应该是一个新的next
+        prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+        //循环体的下一条语句应该是for最后一个位置的begin
+        loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+        //循环体的开始语句应该是prev的next
+        loop_body->label.begin_label=prev->label.next_label;
+        //for循环最后一个位置的next应该是循环体的开始语句
+        after->label.next_label=loop_body->label.begin_label;
+        //condition的真值标号应该是循环体的begin
+        condition->label.true_label=loop_body->label.begin_label;
+        //condition的假值标号应该是for的next
+        condition->label.false_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_STMT && node->stype==STMT_FOR && node->child_num==2)
+    {
+        TreeNode*prev=node->child;
+        TreeNode*condition=node->child->sibling;
+        TreeNode*loop_body=node->child->sibling->sibling;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("for_e_e__begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("for_e_e__next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+        //for循环第一个位置的begin即为for节点的begin
+        prev->label.begin_label=node->label.begin_label;
+        //for循环第一个位置的next应该是一个新的next
+        prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+        //循环体的开始应该是第一个位置的next
+        loop_body->label.begin_label=prev->label.next_label;
+        //循环体的next应该是第一个位置的next
+        loop_body->label.next_label=prev->label.next_label;
+        //condition的真值是循环的开始
+        condition->label.true_label=loop_body->label.begin_label;
+        //condition的假值是node的next
+        condition->label.false_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_EXPR)
+    {
+        if(node->exprtype==EXPR_LOGICAL)
+        {
+            if(node->optype==OP_OR)
+            {
+                flag=1;
+                TreeNode*first_op=node->child;
+                TreeNode*seconde_op=node->child->sibling;
+                if(node->label.true_label==nullptr)
+                {
+                    node->label.true_label=new string("expr_or_true_label"+to_string(node->nodeID));
+                }
+                if(node->label.false_label==nullptr)
+                {
+                    node->label.false_label=new string("expr_or_false_label"+to_string(node->nodeID));
+                }
+                first_op->label.true_label=node->label.true_label;
+                first_op->label.false_label=new string("E1_false_label"+to_string(first_op->nodeID));
+                seconde_op->label.true_label=node->label.true_label;
+                seconde_op->label.false_label=node->label.false_label;
+            }
+            else if(node->optype==OP_AND)
+            {
+                flag=1;
+                TreeNode*first_op=node->child;
+                TreeNode*seconde_op=node->child->sibling;
+                if(node->label.true_label==nullptr)
+                {
+                    node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+                }
+                if(node->label.false_label==nullptr)
+                {
+                    node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+                }
+                first_op->label.true_label=new string("E1_true_label"+to_string(first_op->nodeID));
+                first_op->label.false_label=node->label.false_label;
+                seconde_op->label.true_label=node->label.true_label;
+                seconde_op->label.false_label=node->label.false_label;
+            }
+        }
+        else if(node->exprtype==EXPR_UNARY && node->optype==OP_NOT)
+        {
+            flag=1;
+            TreeNode*E1=node->child;
+            if(node->label.true_label==nullptr)
+            {
+                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+            }
+            if(node->label.false_label==nullptr)
+            {
+                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+            }
+            E1->label.true_label=node->label.false_label;
+            E1->label.false_label=node->label.true_label;
+        }
+    }
+    if(flag)
+    {
+        TreeNode *tmp = node->child;
+        while (tmp != nullptr)
+        {
+            gen_label(tmp);
+            tmp = tmp->sibling;
+        }
+    }
+}
 
-// }
+int find_str(list<string*>*str_list,string*str)
+{
+    if(str_list->empty())
+        return 0;
+    for(list<string*>::iterator i = str_list->begin();i!=str_list->end();i++)
+    {
+        if(**i==*str)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
+{
+    if(root==nullptr)
+        return;
+    if(root->label.begin_label!=nullptr&&!find_str(str_list,root->label.begin_label))
+    {
+        cout<<*root->label.begin_label<<endl<<endl;
+        str_list->push_back(root->label.begin_label);
+    }
+    TreeNode*tmp=root->child;
+    while(tmp!=nullptr)
+    {
+        print_label(tmp,str_list);
+        tmp=tmp->sibling;
+    }
+    if(root->label.next_label!=nullptr&&!find_str(str_list,root->label.next_label))
+    {
+        cout<<*root->label.next_label<<endl<<endl;
+        str_list->push_back(root->label.next_label);
+    }
+}

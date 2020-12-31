@@ -7,7 +7,7 @@ Terminals unused in grammar
     UADD
 
 
-State 87 conflicts: 1 shift/reduce
+State 50 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -46,151 +46,146 @@ Grammar
    23 iteration_Stmt: WHILE LP expr RP compound_Stmt
    24               | FOR LP expr SEMICOLON expr SEMICOLON expr RP compound_Stmt
    25               | FOR LP expr SEMICOLON expr SEMICOLON RP compound_Stmt
-   26               | FOR LP expr SEMICOLON SEMICOLON expr RP compound_Stmt
-   27               | FOR LP SEMICOLON expr SEMICOLON expr RP compound_Stmt
-   28               | FOR LP expr SEMICOLON SEMICOLON RP compound_Stmt
-   29               | FOR LP SEMICOLON SEMICOLON expr RP compound_Stmt
-   30               | FOR LP SEMICOLON expr SEMICOLON RP compound_Stmt
-   31               | FOR LP SEMICOLON SEMICOLON RP compound_Stmt
 
-   32 jump_Stmt: CONTINUE SEMICOLON
-   33          | BREAK SEMICOLON
-   34          | RETURN expr SEMICOLON
-   35          | RETURN SEMICOLON
+   26 jump_Stmt: CONTINUE SEMICOLON
+   27          | BREAK SEMICOLON
+   28          | RETURN expr SEMICOLON
+   29          | RETURN SEMICOLON
 
-   36 printf: PRINTF LP expr RP
-   37       | PRINTF LP STRING COMMA io_list RP
+   30 printf: PRINTF LP expr RP
+   31       | PRINTF LP STRING COMMA io_list RP
 
-   38 scanf: SCANF LP expr RP
-   39      | SCANF LP STRING COMMA io_list RP
+   32 scanf: SCANF LP expr RP
+   33      | SCANF LP STRING COMMA io_list RP
 
-   40 io_list: expr
-   41        | io_list COMMA expr
+   34 io_list: expr
+   35        | io_list COMMA expr
 
-   42 declaration: T IDENTIFIER ASSIGN additive_expr
-   43            | T id_list
+   36 declaration: T IDENTIFIER ASSIGN additive_expr
+   37            | declaration COMMA IDENTIFIER
+   38            | T IDENTIFIER
 
-   44 id_list: IDENTIFIER
-   45        | id_list COMMA IDENTIFIER
+   39 id_list: IDENTIFIER
+   40        | id_list COMMA IDENTIFIER
 
-   46 expr: condition_expr
-   47     | assignment_expr
-   48     | declaration
+   41 expr: condition_expr
+   42     | assignment_expr
+   43     | declaration
 
-   49 condition_expr: logical_or_expr
+   44 condition_expr: logical_or_expr
 
-   50 logical_or_expr: logical_and_expr
-   51                | logical_or_expr OR logical_and_expr
+   45 logical_or_expr: logical_and_expr
+   46                | logical_or_expr OR logical_and_expr
 
-   52 logical_and_expr: equality_expr
-   53                 | logical_and_expr AND equality_expr
+   47 logical_and_expr: equality_expr
+   48                 | logical_and_expr AND equality_expr
 
-   54 equality_expr: relation_expr
-   55              | equality_expr EQ relation_expr
-   56              | equality_expr NEQ relation_expr
+   49 equality_expr: relation_expr
+   50              | equality_expr EQ relation_expr
+   51              | equality_expr NEQ relation_expr
 
-   57 relation_expr: additive_expr
-   58              | relation_expr LT additive_expr
-   59              | relation_expr LQT additive_expr
-   60              | relation_expr GT additive_expr
-   61              | relation_expr GQT additive_expr
+   52 relation_expr: additive_expr
+   53              | relation_expr LT additive_expr
+   54              | relation_expr LQT additive_expr
+   55              | relation_expr GT additive_expr
+   56              | relation_expr GQT additive_expr
 
-   62 assignment_expr: unary_expr ASSIGN additive_expr
-   63                | unary_expr ADD_ASSIGN additive_expr
-   64                | unary_expr SUB_ASSIGN additive_expr
-   65                | unary_expr MUL_ASSIGN additive_expr
-   66                | unary_expr DIV_ASSIGN additive_expr
+   57 assignment_expr: unary_expr ASSIGN additive_expr
+   58                | unary_expr ADD_ASSIGN additive_expr
+   59                | unary_expr SUB_ASSIGN additive_expr
+   60                | unary_expr MUL_ASSIGN additive_expr
+   61                | unary_expr DIV_ASSIGN additive_expr
 
-   67 additive_expr: mult_expr
-   68              | additive_expr ADD mult_expr
-   69              | additive_expr SUB mult_expr
+   62 additive_expr: mult_expr
+   63              | additive_expr ADD mult_expr
+   64              | additive_expr SUB mult_expr
 
-   70 mult_expr: cast_expr
-   71          | mult_expr MUL cast_expr
-   72          | mult_expr DIV cast_expr
-   73          | mult_expr MODE cast_expr
+   65 mult_expr: cast_expr
+   66          | mult_expr MUL cast_expr
+   67          | mult_expr DIV cast_expr
+   68          | mult_expr MODE cast_expr
 
-   74 cast_expr: unary_expr
+   69 cast_expr: unary_expr
 
-   75 unary_expr: postfix_expr
-   76           | SUB cast_expr
-   77           | NOT cast_expr
-   78           | REFERENCE cast_expr
+   70 unary_expr: postfix_expr
+   71           | SUB cast_expr
+   72           | NOT cast_expr
+   73           | REFERENCE cast_expr
 
-   79 postfix_expr: primary_expr
-   80             | postfix_expr INC
-   81             | postfix_expr DEC
+   74 postfix_expr: primary_expr
+   75             | postfix_expr INC
+   76             | postfix_expr DEC
 
-   82 primary_expr: IDENTIFIER
-   83             | paperConst
-   84             | LP expr RP
+   77 primary_expr: IDENTIFIER
+   78             | paperConst
+   79             | LP expr RP
 
-   85 paperConst: INTEGER
-   86           | CHAR
-   87           | STRING
-   88           | BOOL
+   80 paperConst: INTEGER
+   81           | CHAR
+   82           | STRING
+   83           | BOOL
 
-   89 T: T_INT
-   90  | T_CHAR
-   91  | T_BOOL
-   92  | T_STRING
-   93  | T_VOID
+   84 T: T_INT
+   85  | T_CHAR
+   86  | T_BOOL
+   87  | T_STRING
+   88  | T_VOID
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    T_CHAR (258) 90
-    T_INT (259) 89
-    T_STRING (260) 92
-    T_BOOL (261) 91
-    T_VOID (262) 93
+    T_CHAR (258) 85
+    T_INT (259) 84
+    T_STRING (260) 87
+    T_BOOL (261) 86
+    T_VOID (262) 88
     TRUE (263)
     FALSE (264)
-    ASSIGN (265) 42 62
-    ADD_ASSIGN (266) 63
-    SUB_ASSIGN (267) 64
-    MUL_ASSIGN (268) 65
-    DIV_ASSIGN (269) 66
-    EQ (270) 55
-    NEQ (271) 56
-    GQT (272) 61
-    LQT (273) 59
-    GT (274) 60
-    LT (275) 58
-    ADD (276) 68
-    SUB (277) 69 76
-    MUL (278) 71
-    DIV (279) 72
-    MODE (280) 73
-    INC (281) 80
-    DEC (282) 81
-    AND (283) 53
-    OR (284) 51
-    NOT (285) 77
-    PRINTF (286) 36 37
-    SCANF (287) 38 39
-    REFERENCE (288) 78
+    ASSIGN (265) 36 57
+    ADD_ASSIGN (266) 58
+    SUB_ASSIGN (267) 59
+    MUL_ASSIGN (268) 60
+    DIV_ASSIGN (269) 61
+    EQ (270) 50
+    NEQ (271) 51
+    GQT (272) 56
+    LQT (273) 54
+    GT (274) 55
+    LT (275) 53
+    ADD (276) 63
+    SUB (277) 64 71
+    MUL (278) 66
+    DIV (279) 67
+    MODE (280) 68
+    INC (281) 75
+    DEC (282) 76
+    AND (283) 48
+    OR (284) 46
+    NOT (285) 72
+    PRINTF (286) 30 31
+    SCANF (287) 32 33
+    REFERENCE (288) 73
     CONST (289)
-    SEMICOLON (290) 4 5 6 11 12 24 25 26 27 28 29 30 31 32 33 34 35
-    COMMA (291) 37 39 41 45
-    LP (292) 15 16 17 18 21 22 23 24 25 26 27 28 29 30 31 36 37 38 39 84
-    RP (293) 15 16 17 18 21 22 23 24 25 26 27 28 29 30 31 36 37 38 39 84
+    SEMICOLON (290) 4 5 6 11 12 24 25 26 27 28 29
+    COMMA (291) 31 33 35 37 40
+    LP (292) 15 16 17 18 21 22 23 24 25 30 31 32 33 79
+    RP (293) 15 16 17 18 21 22 23 24 25 30 31 32 33 79
     LC (294) 19 20
     RC (295) 19 20
     WHILE (296) 23
     ELSE (297) 22
     IF (298) 21 22
-    RETURN (299) 34 35
-    FOR (300) 24 25 26 27 28 29 30 31
-    CONTINUE (301) 32
-    BREAK (302) 33
-    IDENTIFIER (303) 15 16 17 18 42 44 45 82
-    INTEGER (304) 85
-    CHAR (305) 86
-    BOOL (306) 88
-    STRING (307) 37 39 87
+    RETURN (299) 28 29
+    FOR (300) 24 25
+    CONTINUE (301) 26
+    BREAK (302) 27
+    IDENTIFIER (303) 15 16 17 18 36 37 38 39 40 77
+    INTEGER (304) 80
+    CHAR (305) 81
+    BOOL (306) 83
+    STRING (307) 31 33 82
     UMINUS (308)
     UADD (309)
     LOWER_THEN_ELSE (310)
@@ -217,76 +212,76 @@ Nonterminals, with rules where they appear
         on right: 13
     compound_Stmt (62)
         on left: 19 20
-        on right: 10 17 18 21 22 23 24 25 26 27 28 29 30 31
+        on right: 10 17 18 21 22 23 24 25
     if_else (63)
         on left: 21 22
         on right: 7
     iteration_Stmt (64)
-        on left: 23 24 25 26 27 28 29 30 31
+        on left: 23 24 25
         on right: 8
     jump_Stmt (65)
-        on left: 32 33 34 35
+        on left: 26 27 28 29
         on right: 9
     printf (66)
-        on left: 36 37
+        on left: 30 31
         on right: 11
     scanf (67)
-        on left: 38 39
+        on left: 32 33
         on right: 12
     io_list (68)
-        on left: 40 41
-        on right: 37 39 41
+        on left: 34 35
+        on right: 31 33 35
     declaration (69)
-        on left: 42 43
-        on right: 5 17 48
+        on left: 36 37 38
+        on right: 5 17 37 43
     id_list (70)
-        on left: 44 45
-        on right: 15 43 45
+        on left: 39 40
+        on right: 15 40
     expr (71)
-        on left: 46 47 48
-        on right: 21 22 23 24 25 26 27 28 29 30 34 36 38 40 41 84
+        on left: 41 42 43
+        on right: 21 22 23 24 25 28 30 32 34 35 79
     condition_expr (72)
-        on left: 49
-        on right: 46
+        on left: 44
+        on right: 41
     logical_or_expr (73)
-        on left: 50 51
-        on right: 49 51
+        on left: 45 46
+        on right: 44 46
     logical_and_expr (74)
-        on left: 52 53
-        on right: 50 51 53
+        on left: 47 48
+        on right: 45 46 48
     equality_expr (75)
-        on left: 54 55 56
-        on right: 52 53 55 56
+        on left: 49 50 51
+        on right: 47 48 50 51
     relation_expr (76)
-        on left: 57 58 59 60 61
-        on right: 54 55 56 58 59 60 61
+        on left: 52 53 54 55 56
+        on right: 49 50 51 53 54 55 56
     assignment_expr (77)
-        on left: 62 63 64 65 66
-        on right: 6 47
+        on left: 57 58 59 60 61
+        on right: 6 42
     additive_expr (78)
-        on left: 67 68 69
-        on right: 42 57 58 59 60 61 62 63 64 65 66 68 69
+        on left: 62 63 64
+        on right: 36 52 53 54 55 56 57 58 59 60 61 63 64
     mult_expr (79)
-        on left: 70 71 72 73
-        on right: 67 68 69 71 72 73
+        on left: 65 66 67 68
+        on right: 62 63 64 66 67 68
     cast_expr (80)
-        on left: 74
-        on right: 70 71 72 73 76 77 78
+        on left: 69
+        on right: 65 66 67 68 71 72 73
     unary_expr (81)
-        on left: 75 76 77 78
-        on right: 62 63 64 65 66 74
+        on left: 70 71 72 73
+        on right: 57 58 59 60 61 69
     postfix_expr (82)
-        on left: 79 80 81
-        on right: 75 80 81
+        on left: 74 75 76
+        on right: 70 75 76
     primary_expr (83)
-        on left: 82 83 84
-        on right: 79
+        on left: 77 78 79
+        on right: 74
     paperConst (84)
-        on left: 85 86 87 88
-        on right: 83
+        on left: 80 81 82 83
+        on right: 78
     T (85)
-        on left: 89 90 91 92 93
-        on right: 17 18 42 43
+        on left: 84 85 86 87 88
+        on right: 17 18 36 38
 
 
 State 0
@@ -340,42 +335,42 @@ State 0
 
 State 1
 
-   90 T: T_CHAR .
+   85 T: T_CHAR .
 
-    $default  reduce using rule 90 (T)
+    $default  reduce using rule 85 (T)
 
 
 State 2
 
-   89 T: T_INT .
+   84 T: T_INT .
 
-    $default  reduce using rule 89 (T)
+    $default  reduce using rule 84 (T)
 
 
 State 3
 
-   92 T: T_STRING .
+   87 T: T_STRING .
 
-    $default  reduce using rule 92 (T)
+    $default  reduce using rule 87 (T)
 
 
 State 4
 
-   91 T: T_BOOL .
+   86 T: T_BOOL .
 
-    $default  reduce using rule 91 (T)
+    $default  reduce using rule 86 (T)
 
 
 State 5
 
-   93 T: T_VOID .
+   88 T: T_VOID .
 
-    $default  reduce using rule 93 (T)
+    $default  reduce using rule 88 (T)
 
 
 State 6
 
-   76 unary_expr: SUB . cast_expr
+   71 unary_expr: SUB . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -396,7 +391,7 @@ State 6
 
 State 7
 
-   77 unary_expr: NOT . cast_expr
+   72 unary_expr: NOT . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -417,23 +412,23 @@ State 7
 
 State 8
 
-   36 printf: PRINTF . LP expr RP
-   37       | PRINTF . LP STRING COMMA io_list RP
+   30 printf: PRINTF . LP expr RP
+   31       | PRINTF . LP STRING COMMA io_list RP
 
     LP  shift, and go to state 47
 
 
 State 9
 
-   38 scanf: SCANF . LP expr RP
-   39      | SCANF . LP STRING COMMA io_list RP
+   32 scanf: SCANF . LP expr RP
+   33      | SCANF . LP STRING COMMA io_list RP
 
     LP  shift, and go to state 48
 
 
 State 10
 
-   78 unary_expr: REFERENCE . cast_expr
+   73 unary_expr: REFERENCE . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -461,7 +456,7 @@ State 11
 
 State 12
 
-   84 primary_expr: LP . expr RP
+   79 primary_expr: LP . expr RP
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -563,8 +558,8 @@ State 15
 
 State 16
 
-   34 jump_Stmt: RETURN . expr SEMICOLON
-   35          | RETURN . SEMICOLON
+   28 jump_Stmt: RETURN . expr SEMICOLON
+   29          | RETURN . SEMICOLON
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -604,26 +599,20 @@ State 17
 
    24 iteration_Stmt: FOR . LP expr SEMICOLON expr SEMICOLON expr RP compound_Stmt
    25               | FOR . LP expr SEMICOLON expr SEMICOLON RP compound_Stmt
-   26               | FOR . LP expr SEMICOLON SEMICOLON expr RP compound_Stmt
-   27               | FOR . LP SEMICOLON expr SEMICOLON expr RP compound_Stmt
-   28               | FOR . LP expr SEMICOLON SEMICOLON RP compound_Stmt
-   29               | FOR . LP SEMICOLON SEMICOLON expr RP compound_Stmt
-   30               | FOR . LP SEMICOLON expr SEMICOLON RP compound_Stmt
-   31               | FOR . LP SEMICOLON SEMICOLON RP compound_Stmt
 
     LP  shift, and go to state 69
 
 
 State 18
 
-   32 jump_Stmt: CONTINUE . SEMICOLON
+   26 jump_Stmt: CONTINUE . SEMICOLON
 
     SEMICOLON  shift, and go to state 70
 
 
 State 19
 
-   33 jump_Stmt: BREAK . SEMICOLON
+   27 jump_Stmt: BREAK . SEMICOLON
 
     SEMICOLON  shift, and go to state 71
 
@@ -632,39 +621,39 @@ State 20
 
    15 function_Call: IDENTIFIER . LP id_list RP
    16              | IDENTIFIER . LP RP
-   82 primary_expr: IDENTIFIER .
+   77 primary_expr: IDENTIFIER .
 
     LP  shift, and go to state 72
 
-    $default  reduce using rule 82 (primary_expr)
+    $default  reduce using rule 77 (primary_expr)
 
 
 State 21
 
-   85 paperConst: INTEGER .
+   80 paperConst: INTEGER .
 
-    $default  reduce using rule 85 (paperConst)
+    $default  reduce using rule 80 (paperConst)
 
 
 State 22
 
-   86 paperConst: CHAR .
+   81 paperConst: CHAR .
 
-    $default  reduce using rule 86 (paperConst)
+    $default  reduce using rule 81 (paperConst)
 
 
 State 23
 
-   88 paperConst: BOOL .
+   83 paperConst: BOOL .
 
-    $default  reduce using rule 88 (paperConst)
+    $default  reduce using rule 83 (paperConst)
 
 
 State 24
 
-   87 paperConst: STRING .
+   82 paperConst: STRING .
 
-    $default  reduce using rule 87 (paperConst)
+    $default  reduce using rule 82 (paperConst)
 
 
 State 25
@@ -790,102 +779,102 @@ State 35
 State 36
 
     5 statement: declaration . SEMICOLON
+   37 declaration: declaration . COMMA IDENTIFIER
 
     SEMICOLON  shift, and go to state 77
+    COMMA      shift, and go to state 78
 
 
 State 37
 
     6 statement: assignment_expr . SEMICOLON
 
-    SEMICOLON  shift, and go to state 78
+    SEMICOLON  shift, and go to state 79
 
 
 State 38
 
-   62 assignment_expr: unary_expr . ASSIGN additive_expr
-   63                | unary_expr . ADD_ASSIGN additive_expr
-   64                | unary_expr . SUB_ASSIGN additive_expr
-   65                | unary_expr . MUL_ASSIGN additive_expr
-   66                | unary_expr . DIV_ASSIGN additive_expr
+   57 assignment_expr: unary_expr . ASSIGN additive_expr
+   58                | unary_expr . ADD_ASSIGN additive_expr
+   59                | unary_expr . SUB_ASSIGN additive_expr
+   60                | unary_expr . MUL_ASSIGN additive_expr
+   61                | unary_expr . DIV_ASSIGN additive_expr
 
-    ASSIGN      shift, and go to state 79
-    ADD_ASSIGN  shift, and go to state 80
-    SUB_ASSIGN  shift, and go to state 81
-    MUL_ASSIGN  shift, and go to state 82
-    DIV_ASSIGN  shift, and go to state 83
+    ASSIGN      shift, and go to state 80
+    ADD_ASSIGN  shift, and go to state 81
+    SUB_ASSIGN  shift, and go to state 82
+    MUL_ASSIGN  shift, and go to state 83
+    DIV_ASSIGN  shift, and go to state 84
 
 
 State 39
 
-   75 unary_expr: postfix_expr .
-   80 postfix_expr: postfix_expr . INC
-   81             | postfix_expr . DEC
+   70 unary_expr: postfix_expr .
+   75 postfix_expr: postfix_expr . INC
+   76             | postfix_expr . DEC
 
-    INC  shift, and go to state 84
-    DEC  shift, and go to state 85
+    INC  shift, and go to state 85
+    DEC  shift, and go to state 86
 
-    $default  reduce using rule 75 (unary_expr)
+    $default  reduce using rule 70 (unary_expr)
 
 
 State 40
 
-   79 postfix_expr: primary_expr .
+   74 postfix_expr: primary_expr .
 
-    $default  reduce using rule 79 (postfix_expr)
+    $default  reduce using rule 74 (postfix_expr)
 
 
 State 41
 
-   83 primary_expr: paperConst .
+   78 primary_expr: paperConst .
 
-    $default  reduce using rule 83 (primary_expr)
+    $default  reduce using rule 78 (primary_expr)
 
 
 State 42
 
    17 function_Definition: T . IDENTIFIER LP declaration RP compound_Stmt
    18                    | T . IDENTIFIER LP RP compound_Stmt
-   42 declaration: T . IDENTIFIER ASSIGN additive_expr
-   43            | T . id_list
+   36 declaration: T . IDENTIFIER ASSIGN additive_expr
+   38            | T . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 86
-
-    id_list  go to state 87
+    IDENTIFIER  shift, and go to state 87
 
 
 State 43
 
-   82 primary_expr: IDENTIFIER .
+   77 primary_expr: IDENTIFIER .
 
-    $default  reduce using rule 82 (primary_expr)
+    $default  reduce using rule 77 (primary_expr)
 
 
 State 44
 
-   76 unary_expr: SUB cast_expr .
+   71 unary_expr: SUB cast_expr .
 
-    $default  reduce using rule 76 (unary_expr)
+    $default  reduce using rule 71 (unary_expr)
 
 
 State 45
 
-   74 cast_expr: unary_expr .
+   69 cast_expr: unary_expr .
 
-    $default  reduce using rule 74 (cast_expr)
+    $default  reduce using rule 69 (cast_expr)
 
 
 State 46
 
-   77 unary_expr: NOT cast_expr .
+   72 unary_expr: NOT cast_expr .
 
-    $default  reduce using rule 77 (unary_expr)
+    $default  reduce using rule 72 (unary_expr)
 
 
 State 47
 
-   36 printf: PRINTF LP . expr RP
-   37       | PRINTF LP . STRING COMMA io_list RP
+   30 printf: PRINTF LP . expr RP
+   31       | PRINTF LP . STRING COMMA io_list RP
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -922,8 +911,8 @@ State 47
 
 State 48
 
-   38 scanf: SCANF LP . expr RP
-   39      | SCANF LP . STRING COMMA io_list RP
+   32 scanf: SCANF LP . expr RP
+   33      | SCANF LP . STRING COMMA io_list RP
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -960,146 +949,148 @@ State 48
 
 State 49
 
-   78 unary_expr: REFERENCE cast_expr .
+   73 unary_expr: REFERENCE cast_expr .
 
-    $default  reduce using rule 78 (unary_expr)
+    $default  reduce using rule 73 (unary_expr)
 
 
 State 50
 
-   48 expr: declaration .
+   37 declaration: declaration . COMMA IDENTIFIER
+   43 expr: declaration .
 
-    $default  reduce using rule 48 (expr)
+    COMMA  shift, and go to state 78
+
+    COMMA     [reduce using rule 43 (expr)]
+    $default  reduce using rule 43 (expr)
 
 
 State 51
 
-   84 primary_expr: LP expr . RP
+   79 primary_expr: LP expr . RP
 
     RP  shift, and go to state 92
 
 
 State 52
 
-   46 expr: condition_expr .
+   41 expr: condition_expr .
 
-    $default  reduce using rule 46 (expr)
+    $default  reduce using rule 41 (expr)
 
 
 State 53
 
-   49 condition_expr: logical_or_expr .
-   51 logical_or_expr: logical_or_expr . OR logical_and_expr
+   44 condition_expr: logical_or_expr .
+   46 logical_or_expr: logical_or_expr . OR logical_and_expr
 
     OR  shift, and go to state 93
 
-    $default  reduce using rule 49 (condition_expr)
+    $default  reduce using rule 44 (condition_expr)
 
 
 State 54
 
-   50 logical_or_expr: logical_and_expr .
-   53 logical_and_expr: logical_and_expr . AND equality_expr
+   45 logical_or_expr: logical_and_expr .
+   48 logical_and_expr: logical_and_expr . AND equality_expr
 
     AND  shift, and go to state 94
 
-    $default  reduce using rule 50 (logical_or_expr)
+    $default  reduce using rule 45 (logical_or_expr)
 
 
 State 55
 
-   52 logical_and_expr: equality_expr .
-   55 equality_expr: equality_expr . EQ relation_expr
-   56              | equality_expr . NEQ relation_expr
+   47 logical_and_expr: equality_expr .
+   50 equality_expr: equality_expr . EQ relation_expr
+   51              | equality_expr . NEQ relation_expr
 
     EQ   shift, and go to state 95
     NEQ  shift, and go to state 96
 
-    $default  reduce using rule 52 (logical_and_expr)
+    $default  reduce using rule 47 (logical_and_expr)
 
 
 State 56
 
-   54 equality_expr: relation_expr .
-   58 relation_expr: relation_expr . LT additive_expr
-   59              | relation_expr . LQT additive_expr
-   60              | relation_expr . GT additive_expr
-   61              | relation_expr . GQT additive_expr
+   49 equality_expr: relation_expr .
+   53 relation_expr: relation_expr . LT additive_expr
+   54              | relation_expr . LQT additive_expr
+   55              | relation_expr . GT additive_expr
+   56              | relation_expr . GQT additive_expr
 
     GQT  shift, and go to state 97
     LQT  shift, and go to state 98
     GT   shift, and go to state 99
     LT   shift, and go to state 100
 
-    $default  reduce using rule 54 (equality_expr)
+    $default  reduce using rule 49 (equality_expr)
 
 
 State 57
 
-   47 expr: assignment_expr .
+   42 expr: assignment_expr .
 
-    $default  reduce using rule 47 (expr)
+    $default  reduce using rule 42 (expr)
 
 
 State 58
 
-   57 relation_expr: additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   52 relation_expr: additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 57 (relation_expr)
+    $default  reduce using rule 52 (relation_expr)
 
 
 State 59
 
-   67 additive_expr: mult_expr .
-   71 mult_expr: mult_expr . MUL cast_expr
-   72          | mult_expr . DIV cast_expr
-   73          | mult_expr . MODE cast_expr
+   62 additive_expr: mult_expr .
+   66 mult_expr: mult_expr . MUL cast_expr
+   67          | mult_expr . DIV cast_expr
+   68          | mult_expr . MODE cast_expr
 
     MUL   shift, and go to state 103
     DIV   shift, and go to state 104
     MODE  shift, and go to state 105
 
-    $default  reduce using rule 67 (additive_expr)
+    $default  reduce using rule 62 (additive_expr)
 
 
 State 60
 
-   70 mult_expr: cast_expr .
+   65 mult_expr: cast_expr .
 
-    $default  reduce using rule 70 (mult_expr)
+    $default  reduce using rule 65 (mult_expr)
 
 
 State 61
 
-   62 assignment_expr: unary_expr . ASSIGN additive_expr
-   63                | unary_expr . ADD_ASSIGN additive_expr
-   64                | unary_expr . SUB_ASSIGN additive_expr
-   65                | unary_expr . MUL_ASSIGN additive_expr
-   66                | unary_expr . DIV_ASSIGN additive_expr
-   74 cast_expr: unary_expr .
+   57 assignment_expr: unary_expr . ASSIGN additive_expr
+   58                | unary_expr . ADD_ASSIGN additive_expr
+   59                | unary_expr . SUB_ASSIGN additive_expr
+   60                | unary_expr . MUL_ASSIGN additive_expr
+   61                | unary_expr . DIV_ASSIGN additive_expr
+   69 cast_expr: unary_expr .
 
-    ASSIGN      shift, and go to state 79
-    ADD_ASSIGN  shift, and go to state 80
-    SUB_ASSIGN  shift, and go to state 81
-    MUL_ASSIGN  shift, and go to state 82
-    DIV_ASSIGN  shift, and go to state 83
+    ASSIGN      shift, and go to state 80
+    ADD_ASSIGN  shift, and go to state 81
+    SUB_ASSIGN  shift, and go to state 82
+    MUL_ASSIGN  shift, and go to state 83
+    DIV_ASSIGN  shift, and go to state 84
 
-    $default  reduce using rule 74 (cast_expr)
+    $default  reduce using rule 69 (cast_expr)
 
 
 State 62
 
-   42 declaration: T . IDENTIFIER ASSIGN additive_expr
-   43            | T . id_list
+   36 declaration: T . IDENTIFIER ASSIGN additive_expr
+   38            | T . IDENTIFIER
 
     IDENTIFIER  shift, and go to state 106
-
-    id_list  go to state 87
 
 
 State 63
@@ -1235,14 +1226,14 @@ State 66
 
 State 67
 
-   35 jump_Stmt: RETURN SEMICOLON .
+   29 jump_Stmt: RETURN SEMICOLON .
 
-    $default  reduce using rule 35 (jump_Stmt)
+    $default  reduce using rule 29 (jump_Stmt)
 
 
 State 68
 
-   34 jump_Stmt: RETURN expr . SEMICOLON
+   28 jump_Stmt: RETURN expr . SEMICOLON
 
     SEMICOLON  shift, and go to state 110
 
@@ -1251,12 +1242,6 @@ State 69
 
    24 iteration_Stmt: FOR LP . expr SEMICOLON expr SEMICOLON expr RP compound_Stmt
    25               | FOR LP . expr SEMICOLON expr SEMICOLON RP compound_Stmt
-   26               | FOR LP . expr SEMICOLON SEMICOLON expr RP compound_Stmt
-   27               | FOR LP . SEMICOLON expr SEMICOLON expr RP compound_Stmt
-   28               | FOR LP . expr SEMICOLON SEMICOLON RP compound_Stmt
-   29               | FOR LP . SEMICOLON SEMICOLON expr RP compound_Stmt
-   30               | FOR LP . SEMICOLON expr SEMICOLON RP compound_Stmt
-   31               | FOR LP . SEMICOLON SEMICOLON RP compound_Stmt
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -1266,7 +1251,6 @@ State 69
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
     REFERENCE   shift, and go to state 10
-    SEMICOLON   shift, and go to state 111
     LP          shift, and go to state 12
     IDENTIFIER  shift, and go to state 43
     INTEGER     shift, and go to state 21
@@ -1275,7 +1259,7 @@ State 69
     STRING      shift, and go to state 24
 
     declaration       go to state 50
-    expr              go to state 112
+    expr              go to state 111
     condition_expr    go to state 52
     logical_or_expr   go to state 53
     logical_and_expr  go to state 54
@@ -1294,16 +1278,16 @@ State 69
 
 State 70
 
-   32 jump_Stmt: CONTINUE SEMICOLON .
+   26 jump_Stmt: CONTINUE SEMICOLON .
 
-    $default  reduce using rule 32 (jump_Stmt)
+    $default  reduce using rule 26 (jump_Stmt)
 
 
 State 71
 
-   33 jump_Stmt: BREAK SEMICOLON .
+   27 jump_Stmt: BREAK SEMICOLON .
 
-    $default  reduce using rule 33 (jump_Stmt)
+    $default  reduce using rule 27 (jump_Stmt)
 
 
 State 72
@@ -1311,10 +1295,10 @@ State 72
    15 function_Call: IDENTIFIER LP . id_list RP
    16              | IDENTIFIER LP . RP
 
-    RP          shift, and go to state 113
-    IDENTIFIER  shift, and go to state 114
+    RP          shift, and go to state 112
+    IDENTIFIER  shift, and go to state 113
 
-    id_list  go to state 115
+    id_list  go to state 114
 
 
 State 73
@@ -1354,14 +1338,21 @@ State 77
 
 State 78
 
+   37 declaration: declaration COMMA . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 115
+
+
+State 79
+
     6 statement: assignment_expr SEMICOLON .
 
     $default  reduce using rule 6 (statement)
 
 
-State 79
+State 80
 
-   62 assignment_expr: unary_expr ASSIGN . additive_expr
+   57 assignment_expr: unary_expr ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1382,9 +1373,9 @@ State 79
     paperConst     go to state 41
 
 
-State 80
+State 81
 
-   63 assignment_expr: unary_expr ADD_ASSIGN . additive_expr
+   58 assignment_expr: unary_expr ADD_ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1405,9 +1396,9 @@ State 80
     paperConst     go to state 41
 
 
-State 81
+State 82
 
-   64 assignment_expr: unary_expr SUB_ASSIGN . additive_expr
+   59 assignment_expr: unary_expr SUB_ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1428,9 +1419,9 @@ State 81
     paperConst     go to state 41
 
 
-State 82
+State 83
 
-   65 assignment_expr: unary_expr MUL_ASSIGN . additive_expr
+   60 assignment_expr: unary_expr MUL_ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1451,9 +1442,9 @@ State 82
     paperConst     go to state 41
 
 
-State 83
+State 84
 
-   66 assignment_expr: unary_expr DIV_ASSIGN . additive_expr
+   61 assignment_expr: unary_expr DIV_ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1474,88 +1465,77 @@ State 83
     paperConst     go to state 41
 
 
-State 84
-
-   80 postfix_expr: postfix_expr INC .
-
-    $default  reduce using rule 80 (postfix_expr)
-
-
 State 85
 
-   81 postfix_expr: postfix_expr DEC .
+   75 postfix_expr: postfix_expr INC .
 
-    $default  reduce using rule 81 (postfix_expr)
+    $default  reduce using rule 75 (postfix_expr)
 
 
 State 86
 
-   17 function_Definition: T IDENTIFIER . LP declaration RP compound_Stmt
-   18                    | T IDENTIFIER . LP RP compound_Stmt
-   42 declaration: T IDENTIFIER . ASSIGN additive_expr
-   44 id_list: IDENTIFIER .
+   76 postfix_expr: postfix_expr DEC .
 
-    ASSIGN  shift, and go to state 121
-    LP      shift, and go to state 122
-
-    $default  reduce using rule 44 (id_list)
+    $default  reduce using rule 76 (postfix_expr)
 
 
 State 87
 
-   43 declaration: T id_list .
-   45 id_list: id_list . COMMA IDENTIFIER
+   17 function_Definition: T IDENTIFIER . LP declaration RP compound_Stmt
+   18                    | T IDENTIFIER . LP RP compound_Stmt
+   36 declaration: T IDENTIFIER . ASSIGN additive_expr
+   38            | T IDENTIFIER .
 
-    COMMA  shift, and go to state 123
+    ASSIGN  shift, and go to state 121
+    LP      shift, and go to state 122
 
-    COMMA     [reduce using rule 43 (declaration)]
-    $default  reduce using rule 43 (declaration)
+    $default  reduce using rule 38 (declaration)
 
 
 State 88
 
-   37 printf: PRINTF LP STRING . COMMA io_list RP
-   87 paperConst: STRING .
+   31 printf: PRINTF LP STRING . COMMA io_list RP
+   82 paperConst: STRING .
 
-    COMMA  shift, and go to state 124
+    COMMA  shift, and go to state 123
 
-    $default  reduce using rule 87 (paperConst)
+    $default  reduce using rule 82 (paperConst)
 
 
 State 89
 
-   36 printf: PRINTF LP expr . RP
+   30 printf: PRINTF LP expr . RP
 
-    RP  shift, and go to state 125
+    RP  shift, and go to state 124
 
 
 State 90
 
-   39 scanf: SCANF LP STRING . COMMA io_list RP
-   87 paperConst: STRING .
+   33 scanf: SCANF LP STRING . COMMA io_list RP
+   82 paperConst: STRING .
 
-    COMMA  shift, and go to state 126
+    COMMA  shift, and go to state 125
 
-    $default  reduce using rule 87 (paperConst)
+    $default  reduce using rule 82 (paperConst)
 
 
 State 91
 
-   38 scanf: SCANF LP expr . RP
+   32 scanf: SCANF LP expr . RP
 
-    RP  shift, and go to state 127
+    RP  shift, and go to state 126
 
 
 State 92
 
-   84 primary_expr: LP expr RP .
+   79 primary_expr: LP expr RP .
 
-    $default  reduce using rule 84 (primary_expr)
+    $default  reduce using rule 79 (primary_expr)
 
 
 State 93
 
-   51 logical_or_expr: logical_or_expr OR . logical_and_expr
+   46 logical_or_expr: logical_or_expr OR . logical_and_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1567,7 +1547,7 @@ State 93
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    logical_and_expr  go to state 128
+    logical_and_expr  go to state 127
     equality_expr     go to state 55
     relation_expr     go to state 56
     additive_expr     go to state 58
@@ -1581,7 +1561,7 @@ State 93
 
 State 94
 
-   53 logical_and_expr: logical_and_expr AND . equality_expr
+   48 logical_and_expr: logical_and_expr AND . equality_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1593,7 +1573,7 @@ State 94
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    equality_expr  go to state 129
+    equality_expr  go to state 128
     relation_expr  go to state 56
     additive_expr  go to state 58
     mult_expr      go to state 59
@@ -1606,7 +1586,31 @@ State 94
 
 State 95
 
-   55 equality_expr: equality_expr EQ . relation_expr
+   50 equality_expr: equality_expr EQ . relation_expr
+
+    SUB         shift, and go to state 6
+    NOT         shift, and go to state 7
+    REFERENCE   shift, and go to state 10
+    LP          shift, and go to state 12
+    IDENTIFIER  shift, and go to state 43
+    INTEGER     shift, and go to state 21
+    CHAR        shift, and go to state 22
+    BOOL        shift, and go to state 23
+    STRING      shift, and go to state 24
+
+    relation_expr  go to state 129
+    additive_expr  go to state 58
+    mult_expr      go to state 59
+    cast_expr      go to state 60
+    unary_expr     go to state 45
+    postfix_expr   go to state 39
+    primary_expr   go to state 40
+    paperConst     go to state 41
+
+
+State 96
+
+   51 equality_expr: equality_expr NEQ . relation_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1628,9 +1632,9 @@ State 95
     paperConst     go to state 41
 
 
-State 96
+State 97
 
-   56 equality_expr: equality_expr NEQ . relation_expr
+   56 relation_expr: relation_expr GQT . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1642,8 +1646,7 @@ State 96
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    relation_expr  go to state 131
-    additive_expr  go to state 58
+    additive_expr  go to state 131
     mult_expr      go to state 59
     cast_expr      go to state 60
     unary_expr     go to state 45
@@ -1652,9 +1655,9 @@ State 96
     paperConst     go to state 41
 
 
-State 97
+State 98
 
-   61 relation_expr: relation_expr GQT . additive_expr
+   54 relation_expr: relation_expr LQT . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1675,9 +1678,9 @@ State 97
     paperConst     go to state 41
 
 
-State 98
+State 99
 
-   59 relation_expr: relation_expr LQT . additive_expr
+   55 relation_expr: relation_expr GT . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1698,9 +1701,9 @@ State 98
     paperConst     go to state 41
 
 
-State 99
+State 100
 
-   60 relation_expr: relation_expr GT . additive_expr
+   53 relation_expr: relation_expr LT . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1721,9 +1724,9 @@ State 99
     paperConst     go to state 41
 
 
-State 100
+State 101
 
-   58 relation_expr: relation_expr LT . additive_expr
+   63 additive_expr: additive_expr ADD . mult_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1735,18 +1738,17 @@ State 100
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    additive_expr  go to state 135
-    mult_expr      go to state 59
-    cast_expr      go to state 60
-    unary_expr     go to state 45
-    postfix_expr   go to state 39
-    primary_expr   go to state 40
-    paperConst     go to state 41
+    mult_expr     go to state 135
+    cast_expr     go to state 60
+    unary_expr    go to state 45
+    postfix_expr  go to state 39
+    primary_expr  go to state 40
+    paperConst    go to state 41
 
 
-State 101
+State 102
 
-   68 additive_expr: additive_expr ADD . mult_expr
+   64 additive_expr: additive_expr SUB . mult_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1766,9 +1768,9 @@ State 101
     paperConst    go to state 41
 
 
-State 102
+State 103
 
-   69 additive_expr: additive_expr SUB . mult_expr
+   66 mult_expr: mult_expr MUL . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1780,17 +1782,16 @@ State 102
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    mult_expr     go to state 137
-    cast_expr     go to state 60
+    cast_expr     go to state 137
     unary_expr    go to state 45
     postfix_expr  go to state 39
     primary_expr  go to state 40
     paperConst    go to state 41
 
 
-State 103
+State 104
 
-   71 mult_expr: mult_expr MUL . cast_expr
+   67 mult_expr: mult_expr DIV . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1809,9 +1810,9 @@ State 103
     paperConst    go to state 41
 
 
-State 104
+State 105
 
-   72 mult_expr: mult_expr DIV . cast_expr
+   68 mult_expr: mult_expr MODE . cast_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -1830,35 +1831,14 @@ State 104
     paperConst    go to state 41
 
 
-State 105
-
-   73 mult_expr: mult_expr MODE . cast_expr
-
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    LP          shift, and go to state 12
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    cast_expr     go to state 140
-    unary_expr    go to state 45
-    postfix_expr  go to state 39
-    primary_expr  go to state 40
-    paperConst    go to state 41
-
-
 State 106
 
-   42 declaration: T IDENTIFIER . ASSIGN additive_expr
-   44 id_list: IDENTIFIER .
+   36 declaration: T IDENTIFIER . ASSIGN additive_expr
+   38            | T IDENTIFIER .
 
     ASSIGN  shift, and go to state 121
 
-    $default  reduce using rule 44 (id_list)
+    $default  reduce using rule 38 (declaration)
 
 
 State 107
@@ -1872,7 +1852,7 @@ State 108
 
    23 iteration_Stmt: WHILE LP expr . RP compound_Stmt
 
-    RP  shift, and go to state 141
+    RP  shift, and go to state 140
 
 
 State 109
@@ -1880,153 +1860,117 @@ State 109
    21 if_else: IF LP expr . RP compound_Stmt
    22        | IF LP expr . RP compound_Stmt ELSE compound_Stmt
 
-    RP  shift, and go to state 142
+    RP  shift, and go to state 141
 
 
 State 110
 
-   34 jump_Stmt: RETURN expr SEMICOLON .
+   28 jump_Stmt: RETURN expr SEMICOLON .
 
-    $default  reduce using rule 34 (jump_Stmt)
+    $default  reduce using rule 28 (jump_Stmt)
 
 
 State 111
 
-   27 iteration_Stmt: FOR LP SEMICOLON . expr SEMICOLON expr RP compound_Stmt
-   29               | FOR LP SEMICOLON . SEMICOLON expr RP compound_Stmt
-   30               | FOR LP SEMICOLON . expr SEMICOLON RP compound_Stmt
-   31               | FOR LP SEMICOLON . SEMICOLON RP compound_Stmt
+   24 iteration_Stmt: FOR LP expr . SEMICOLON expr SEMICOLON expr RP compound_Stmt
+   25               | FOR LP expr . SEMICOLON expr SEMICOLON RP compound_Stmt
 
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    SEMICOLON   shift, and go to state 143
-    LP          shift, and go to state 12
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    declaration       go to state 50
-    expr              go to state 144
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
+    SEMICOLON  shift, and go to state 142
 
 
 State 112
-
-   24 iteration_Stmt: FOR LP expr . SEMICOLON expr SEMICOLON expr RP compound_Stmt
-   25               | FOR LP expr . SEMICOLON expr SEMICOLON RP compound_Stmt
-   26               | FOR LP expr . SEMICOLON SEMICOLON expr RP compound_Stmt
-   28               | FOR LP expr . SEMICOLON SEMICOLON RP compound_Stmt
-
-    SEMICOLON  shift, and go to state 145
-
-
-State 113
 
    16 function_Call: IDENTIFIER LP RP .
 
     $default  reduce using rule 16 (function_Call)
 
 
+State 113
+
+   39 id_list: IDENTIFIER .
+
+    $default  reduce using rule 39 (id_list)
+
+
 State 114
 
-   44 id_list: IDENTIFIER .
+   15 function_Call: IDENTIFIER LP id_list . RP
+   40 id_list: id_list . COMMA IDENTIFIER
 
-    $default  reduce using rule 44 (id_list)
+    COMMA  shift, and go to state 143
+    RP     shift, and go to state 144
 
 
 State 115
 
-   15 function_Call: IDENTIFIER LP id_list . RP
-   45 id_list: id_list . COMMA IDENTIFIER
+   37 declaration: declaration COMMA IDENTIFIER .
 
-    COMMA  shift, and go to state 123
-    RP     shift, and go to state 146
+    $default  reduce using rule 37 (declaration)
 
 
 State 116
 
-   62 assignment_expr: unary_expr ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   57 assignment_expr: unary_expr ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 62 (assignment_expr)
+    $default  reduce using rule 57 (assignment_expr)
 
 
 State 117
 
-   63 assignment_expr: unary_expr ADD_ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   58 assignment_expr: unary_expr ADD_ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 63 (assignment_expr)
+    $default  reduce using rule 58 (assignment_expr)
 
 
 State 118
 
-   64 assignment_expr: unary_expr SUB_ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   59 assignment_expr: unary_expr SUB_ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 64 (assignment_expr)
+    $default  reduce using rule 59 (assignment_expr)
 
 
 State 119
 
-   65 assignment_expr: unary_expr MUL_ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   60 assignment_expr: unary_expr MUL_ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 65 (assignment_expr)
+    $default  reduce using rule 60 (assignment_expr)
 
 
 State 120
 
-   66 assignment_expr: unary_expr DIV_ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   61 assignment_expr: unary_expr DIV_ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 66 (assignment_expr)
+    $default  reduce using rule 61 (assignment_expr)
 
 
 State 121
 
-   42 declaration: T IDENTIFIER ASSIGN . additive_expr
+   36 declaration: T IDENTIFIER ASSIGN . additive_expr
 
     SUB         shift, and go to state 6
     NOT         shift, and go to state 7
@@ -2038,7 +1982,7 @@ State 121
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    additive_expr  go to state 147
+    additive_expr  go to state 145
     mult_expr      go to state 59
     cast_expr      go to state 60
     unary_expr     go to state 45
@@ -2057,67 +2001,60 @@ State 122
     T_STRING  shift, and go to state 3
     T_BOOL    shift, and go to state 4
     T_VOID    shift, and go to state 5
-    RP        shift, and go to state 148
+    RP        shift, and go to state 146
 
-    declaration  go to state 149
+    declaration  go to state 147
     T            go to state 62
 
 
 State 123
 
-   45 id_list: id_list COMMA . IDENTIFIER
+   31 printf: PRINTF LP STRING COMMA . io_list RP
 
-    IDENTIFIER  shift, and go to state 150
+    T_CHAR      shift, and go to state 1
+    T_INT       shift, and go to state 2
+    T_STRING    shift, and go to state 3
+    T_BOOL      shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    SUB         shift, and go to state 6
+    NOT         shift, and go to state 7
+    REFERENCE   shift, and go to state 10
+    LP          shift, and go to state 12
+    IDENTIFIER  shift, and go to state 43
+    INTEGER     shift, and go to state 21
+    CHAR        shift, and go to state 22
+    BOOL        shift, and go to state 23
+    STRING      shift, and go to state 24
+
+    io_list           go to state 148
+    declaration       go to state 50
+    expr              go to state 149
+    condition_expr    go to state 52
+    logical_or_expr   go to state 53
+    logical_and_expr  go to state 54
+    equality_expr     go to state 55
+    relation_expr     go to state 56
+    assignment_expr   go to state 57
+    additive_expr     go to state 58
+    mult_expr         go to state 59
+    cast_expr         go to state 60
+    unary_expr        go to state 61
+    postfix_expr      go to state 39
+    primary_expr      go to state 40
+    paperConst        go to state 41
+    T                 go to state 62
 
 
 State 124
 
-   37 printf: PRINTF LP STRING COMMA . io_list RP
+   30 printf: PRINTF LP expr RP .
 
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    LP          shift, and go to state 12
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    io_list           go to state 151
-    declaration       go to state 50
-    expr              go to state 152
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
+    $default  reduce using rule 30 (printf)
 
 
 State 125
 
-   36 printf: PRINTF LP expr RP .
-
-    $default  reduce using rule 36 (printf)
-
-
-State 126
-
-   39 scanf: SCANF LP STRING COMMA . io_list RP
+   33 scanf: SCANF LP STRING COMMA . io_list RP
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -2134,9 +2071,9 @@ State 126
     BOOL        shift, and go to state 23
     STRING      shift, and go to state 24
 
-    io_list           go to state 153
+    io_list           go to state 150
     declaration       go to state 50
-    expr              go to state 152
+    expr              go to state 149
     condition_expr    go to state 52
     logical_or_expr   go to state 53
     logical_and_expr  go to state 54
@@ -2153,476 +2090,341 @@ State 126
     T                 go to state 62
 
 
+State 126
+
+   32 scanf: SCANF LP expr RP .
+
+    $default  reduce using rule 32 (scanf)
+
+
 State 127
 
-   38 scanf: SCANF LP expr RP .
+   46 logical_or_expr: logical_or_expr OR logical_and_expr .
+   48 logical_and_expr: logical_and_expr . AND equality_expr
 
-    $default  reduce using rule 38 (scanf)
+    AND  shift, and go to state 94
+
+    $default  reduce using rule 46 (logical_or_expr)
 
 
 State 128
 
-   51 logical_or_expr: logical_or_expr OR logical_and_expr .
-   53 logical_and_expr: logical_and_expr . AND equality_expr
-
-    AND  shift, and go to state 94
-
-    $default  reduce using rule 51 (logical_or_expr)
-
-
-State 129
-
-   53 logical_and_expr: logical_and_expr AND equality_expr .
-   55 equality_expr: equality_expr . EQ relation_expr
-   56              | equality_expr . NEQ relation_expr
+   48 logical_and_expr: logical_and_expr AND equality_expr .
+   50 equality_expr: equality_expr . EQ relation_expr
+   51              | equality_expr . NEQ relation_expr
 
     EQ   shift, and go to state 95
     NEQ  shift, and go to state 96
 
-    $default  reduce using rule 53 (logical_and_expr)
+    $default  reduce using rule 48 (logical_and_expr)
+
+
+State 129
+
+   50 equality_expr: equality_expr EQ relation_expr .
+   53 relation_expr: relation_expr . LT additive_expr
+   54              | relation_expr . LQT additive_expr
+   55              | relation_expr . GT additive_expr
+   56              | relation_expr . GQT additive_expr
+
+    GQT  shift, and go to state 97
+    LQT  shift, and go to state 98
+    GT   shift, and go to state 99
+    LT   shift, and go to state 100
+
+    $default  reduce using rule 50 (equality_expr)
 
 
 State 130
 
-   55 equality_expr: equality_expr EQ relation_expr .
-   58 relation_expr: relation_expr . LT additive_expr
-   59              | relation_expr . LQT additive_expr
-   60              | relation_expr . GT additive_expr
-   61              | relation_expr . GQT additive_expr
+   51 equality_expr: equality_expr NEQ relation_expr .
+   53 relation_expr: relation_expr . LT additive_expr
+   54              | relation_expr . LQT additive_expr
+   55              | relation_expr . GT additive_expr
+   56              | relation_expr . GQT additive_expr
 
     GQT  shift, and go to state 97
     LQT  shift, and go to state 98
     GT   shift, and go to state 99
     LT   shift, and go to state 100
 
-    $default  reduce using rule 55 (equality_expr)
+    $default  reduce using rule 51 (equality_expr)
 
 
 State 131
 
-   56 equality_expr: equality_expr NEQ relation_expr .
-   58 relation_expr: relation_expr . LT additive_expr
-   59              | relation_expr . LQT additive_expr
-   60              | relation_expr . GT additive_expr
-   61              | relation_expr . GQT additive_expr
+   56 relation_expr: relation_expr GQT additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
-    GQT  shift, and go to state 97
-    LQT  shift, and go to state 98
-    GT   shift, and go to state 99
-    LT   shift, and go to state 100
+    ADD  shift, and go to state 101
+    SUB  shift, and go to state 102
 
-    $default  reduce using rule 56 (equality_expr)
+    $default  reduce using rule 56 (relation_expr)
 
 
 State 132
 
-   61 relation_expr: relation_expr GQT additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   54 relation_expr: relation_expr LQT additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 61 (relation_expr)
+    $default  reduce using rule 54 (relation_expr)
 
 
 State 133
 
-   59 relation_expr: relation_expr LQT additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   55 relation_expr: relation_expr GT additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 59 (relation_expr)
+    $default  reduce using rule 55 (relation_expr)
 
 
 State 134
 
-   60 relation_expr: relation_expr GT additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   53 relation_expr: relation_expr LT additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 60 (relation_expr)
+    $default  reduce using rule 53 (relation_expr)
 
 
 State 135
 
-   58 relation_expr: relation_expr LT additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   63 additive_expr: additive_expr ADD mult_expr .
+   66 mult_expr: mult_expr . MUL cast_expr
+   67          | mult_expr . DIV cast_expr
+   68          | mult_expr . MODE cast_expr
 
-    ADD  shift, and go to state 101
-    SUB  shift, and go to state 102
+    MUL   shift, and go to state 103
+    DIV   shift, and go to state 104
+    MODE  shift, and go to state 105
 
-    $default  reduce using rule 58 (relation_expr)
+    $default  reduce using rule 63 (additive_expr)
 
 
 State 136
 
-   68 additive_expr: additive_expr ADD mult_expr .
-   71 mult_expr: mult_expr . MUL cast_expr
-   72          | mult_expr . DIV cast_expr
-   73          | mult_expr . MODE cast_expr
+   64 additive_expr: additive_expr SUB mult_expr .
+   66 mult_expr: mult_expr . MUL cast_expr
+   67          | mult_expr . DIV cast_expr
+   68          | mult_expr . MODE cast_expr
 
     MUL   shift, and go to state 103
     DIV   shift, and go to state 104
     MODE  shift, and go to state 105
 
-    $default  reduce using rule 68 (additive_expr)
+    $default  reduce using rule 64 (additive_expr)
 
 
 State 137
 
-   69 additive_expr: additive_expr SUB mult_expr .
-   71 mult_expr: mult_expr . MUL cast_expr
-   72          | mult_expr . DIV cast_expr
-   73          | mult_expr . MODE cast_expr
+   66 mult_expr: mult_expr MUL cast_expr .
 
-    MUL   shift, and go to state 103
-    DIV   shift, and go to state 104
-    MODE  shift, and go to state 105
-
-    $default  reduce using rule 69 (additive_expr)
+    $default  reduce using rule 66 (mult_expr)
 
 
 State 138
 
-   71 mult_expr: mult_expr MUL cast_expr .
+   67 mult_expr: mult_expr DIV cast_expr .
 
-    $default  reduce using rule 71 (mult_expr)
+    $default  reduce using rule 67 (mult_expr)
 
 
 State 139
 
-   72 mult_expr: mult_expr DIV cast_expr .
+   68 mult_expr: mult_expr MODE cast_expr .
 
-    $default  reduce using rule 72 (mult_expr)
+    $default  reduce using rule 68 (mult_expr)
 
 
 State 140
-
-   73 mult_expr: mult_expr MODE cast_expr .
-
-    $default  reduce using rule 73 (mult_expr)
-
-
-State 141
 
    23 iteration_Stmt: WHILE LP expr RP . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 154
+    compound_Stmt  go to state 151
 
 
-State 142
+State 141
 
    21 if_else: IF LP expr RP . compound_Stmt
    22        | IF LP expr RP . compound_Stmt ELSE compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 155
+    compound_Stmt  go to state 152
+
+
+State 142
+
+   24 iteration_Stmt: FOR LP expr SEMICOLON . expr SEMICOLON expr RP compound_Stmt
+   25               | FOR LP expr SEMICOLON . expr SEMICOLON RP compound_Stmt
+
+    T_CHAR      shift, and go to state 1
+    T_INT       shift, and go to state 2
+    T_STRING    shift, and go to state 3
+    T_BOOL      shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    SUB         shift, and go to state 6
+    NOT         shift, and go to state 7
+    REFERENCE   shift, and go to state 10
+    LP          shift, and go to state 12
+    IDENTIFIER  shift, and go to state 43
+    INTEGER     shift, and go to state 21
+    CHAR        shift, and go to state 22
+    BOOL        shift, and go to state 23
+    STRING      shift, and go to state 24
+
+    declaration       go to state 50
+    expr              go to state 153
+    condition_expr    go to state 52
+    logical_or_expr   go to state 53
+    logical_and_expr  go to state 54
+    equality_expr     go to state 55
+    relation_expr     go to state 56
+    assignment_expr   go to state 57
+    additive_expr     go to state 58
+    mult_expr         go to state 59
+    cast_expr         go to state 60
+    unary_expr        go to state 61
+    postfix_expr      go to state 39
+    primary_expr      go to state 40
+    paperConst        go to state 41
+    T                 go to state 62
 
 
 State 143
 
-   29 iteration_Stmt: FOR LP SEMICOLON SEMICOLON . expr RP compound_Stmt
-   31               | FOR LP SEMICOLON SEMICOLON . RP compound_Stmt
+   40 id_list: id_list COMMA . IDENTIFIER
 
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    LP          shift, and go to state 12
-    RP          shift, and go to state 156
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    declaration       go to state 50
-    expr              go to state 157
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
+    IDENTIFIER  shift, and go to state 154
 
 
 State 144
-
-   27 iteration_Stmt: FOR LP SEMICOLON expr . SEMICOLON expr RP compound_Stmt
-   30               | FOR LP SEMICOLON expr . SEMICOLON RP compound_Stmt
-
-    SEMICOLON  shift, and go to state 158
-
-
-State 145
-
-   24 iteration_Stmt: FOR LP expr SEMICOLON . expr SEMICOLON expr RP compound_Stmt
-   25               | FOR LP expr SEMICOLON . expr SEMICOLON RP compound_Stmt
-   26               | FOR LP expr SEMICOLON . SEMICOLON expr RP compound_Stmt
-   28               | FOR LP expr SEMICOLON . SEMICOLON RP compound_Stmt
-
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    SEMICOLON   shift, and go to state 159
-    LP          shift, and go to state 12
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    declaration       go to state 50
-    expr              go to state 160
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
-
-
-State 146
 
    15 function_Call: IDENTIFIER LP id_list RP .
 
     $default  reduce using rule 15 (function_Call)
 
 
-State 147
+State 145
 
-   42 declaration: T IDENTIFIER ASSIGN additive_expr .
-   68 additive_expr: additive_expr . ADD mult_expr
-   69              | additive_expr . SUB mult_expr
+   36 declaration: T IDENTIFIER ASSIGN additive_expr .
+   63 additive_expr: additive_expr . ADD mult_expr
+   64              | additive_expr . SUB mult_expr
 
     ADD  shift, and go to state 101
     SUB  shift, and go to state 102
 
-    $default  reduce using rule 42 (declaration)
+    $default  reduce using rule 36 (declaration)
 
 
-State 148
+State 146
 
    18 function_Definition: T IDENTIFIER LP RP . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 161
+    compound_Stmt  go to state 155
+
+
+State 147
+
+   17 function_Definition: T IDENTIFIER LP declaration . RP compound_Stmt
+   37 declaration: declaration . COMMA IDENTIFIER
+
+    COMMA  shift, and go to state 78
+    RP     shift, and go to state 156
+
+
+State 148
+
+   31 printf: PRINTF LP STRING COMMA io_list . RP
+   35 io_list: io_list . COMMA expr
+
+    COMMA  shift, and go to state 157
+    RP     shift, and go to state 158
 
 
 State 149
 
-   17 function_Definition: T IDENTIFIER LP declaration . RP compound_Stmt
+   34 io_list: expr .
 
-    RP  shift, and go to state 162
+    $default  reduce using rule 34 (io_list)
 
 
 State 150
 
-   45 id_list: id_list COMMA IDENTIFIER .
+   33 scanf: SCANF LP STRING COMMA io_list . RP
+   35 io_list: io_list . COMMA expr
 
-    $default  reduce using rule 45 (id_list)
+    COMMA  shift, and go to state 157
+    RP     shift, and go to state 159
 
 
 State 151
-
-   37 printf: PRINTF LP STRING COMMA io_list . RP
-   41 io_list: io_list . COMMA expr
-
-    COMMA  shift, and go to state 163
-    RP     shift, and go to state 164
-
-
-State 152
-
-   40 io_list: expr .
-
-    $default  reduce using rule 40 (io_list)
-
-
-State 153
-
-   39 scanf: SCANF LP STRING COMMA io_list . RP
-   41 io_list: io_list . COMMA expr
-
-    COMMA  shift, and go to state 163
-    RP     shift, and go to state 165
-
-
-State 154
 
    23 iteration_Stmt: WHILE LP expr RP compound_Stmt .
 
     $default  reduce using rule 23 (iteration_Stmt)
 
 
-State 155
+State 152
 
    21 if_else: IF LP expr RP compound_Stmt .
    22        | IF LP expr RP compound_Stmt . ELSE compound_Stmt
 
-    ELSE  shift, and go to state 166
+    ELSE  shift, and go to state 160
 
     $default  reduce using rule 21 (if_else)
 
 
-State 156
-
-   31 iteration_Stmt: FOR LP SEMICOLON SEMICOLON RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 167
-
-
-State 157
-
-   29 iteration_Stmt: FOR LP SEMICOLON SEMICOLON expr . RP compound_Stmt
-
-    RP  shift, and go to state 168
-
-
-State 158
-
-   27 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON . expr RP compound_Stmt
-   30               | FOR LP SEMICOLON expr SEMICOLON . RP compound_Stmt
-
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    LP          shift, and go to state 12
-    RP          shift, and go to state 169
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    declaration       go to state 50
-    expr              go to state 170
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
-
-
-State 159
-
-   26 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON . expr RP compound_Stmt
-   28               | FOR LP expr SEMICOLON SEMICOLON . RP compound_Stmt
-
-    T_CHAR      shift, and go to state 1
-    T_INT       shift, and go to state 2
-    T_STRING    shift, and go to state 3
-    T_BOOL      shift, and go to state 4
-    T_VOID      shift, and go to state 5
-    SUB         shift, and go to state 6
-    NOT         shift, and go to state 7
-    REFERENCE   shift, and go to state 10
-    LP          shift, and go to state 12
-    RP          shift, and go to state 171
-    IDENTIFIER  shift, and go to state 43
-    INTEGER     shift, and go to state 21
-    CHAR        shift, and go to state 22
-    BOOL        shift, and go to state 23
-    STRING      shift, and go to state 24
-
-    declaration       go to state 50
-    expr              go to state 172
-    condition_expr    go to state 52
-    logical_or_expr   go to state 53
-    logical_and_expr  go to state 54
-    equality_expr     go to state 55
-    relation_expr     go to state 56
-    assignment_expr   go to state 57
-    additive_expr     go to state 58
-    mult_expr         go to state 59
-    cast_expr         go to state 60
-    unary_expr        go to state 61
-    postfix_expr      go to state 39
-    primary_expr      go to state 40
-    paperConst        go to state 41
-    T                 go to state 62
-
-
-State 160
+State 153
 
    24 iteration_Stmt: FOR LP expr SEMICOLON expr . SEMICOLON expr RP compound_Stmt
    25               | FOR LP expr SEMICOLON expr . SEMICOLON RP compound_Stmt
 
-    SEMICOLON  shift, and go to state 173
+    SEMICOLON  shift, and go to state 161
 
 
-State 161
+State 154
+
+   40 id_list: id_list COMMA IDENTIFIER .
+
+    $default  reduce using rule 40 (id_list)
+
+
+State 155
 
    18 function_Definition: T IDENTIFIER LP RP compound_Stmt .
 
     $default  reduce using rule 18 (function_Definition)
 
 
-State 162
+State 156
 
    17 function_Definition: T IDENTIFIER LP declaration RP . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 174
+    compound_Stmt  go to state 162
 
 
-State 163
+State 157
 
-   41 io_list: io_list COMMA . expr
+   35 io_list: io_list COMMA . expr
 
     T_CHAR      shift, and go to state 1
     T_INT       shift, and go to state 2
@@ -2640,7 +2442,7 @@ State 163
     STRING      shift, and go to state 24
 
     declaration       go to state 50
-    expr              go to state 175
+    expr              go to state 163
     condition_expr    go to state 52
     logical_or_expr   go to state 53
     logical_and_expr  go to state 54
@@ -2657,78 +2459,30 @@ State 163
     T                 go to state 62
 
 
-State 164
+State 158
 
-   37 printf: PRINTF LP STRING COMMA io_list RP .
+   31 printf: PRINTF LP STRING COMMA io_list RP .
 
-    $default  reduce using rule 37 (printf)
-
-
-State 165
-
-   39 scanf: SCANF LP STRING COMMA io_list RP .
-
-    $default  reduce using rule 39 (scanf)
+    $default  reduce using rule 31 (printf)
 
 
-State 166
+State 159
+
+   33 scanf: SCANF LP STRING COMMA io_list RP .
+
+    $default  reduce using rule 33 (scanf)
+
+
+State 160
 
    22 if_else: IF LP expr RP compound_Stmt ELSE . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 176
+    compound_Stmt  go to state 164
 
 
-State 167
-
-   31 iteration_Stmt: FOR LP SEMICOLON SEMICOLON RP compound_Stmt .
-
-    $default  reduce using rule 31 (iteration_Stmt)
-
-
-State 168
-
-   29 iteration_Stmt: FOR LP SEMICOLON SEMICOLON expr RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 177
-
-
-State 169
-
-   30 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 178
-
-
-State 170
-
-   27 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON expr . RP compound_Stmt
-
-    RP  shift, and go to state 179
-
-
-State 171
-
-   28 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 180
-
-
-State 172
-
-   26 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON expr . RP compound_Stmt
-
-    RP  shift, and go to state 181
-
-
-State 173
+State 161
 
    24 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON . expr RP compound_Stmt
    25               | FOR LP expr SEMICOLON expr SEMICOLON . RP compound_Stmt
@@ -2742,7 +2496,7 @@ State 173
     NOT         shift, and go to state 7
     REFERENCE   shift, and go to state 10
     LP          shift, and go to state 12
-    RP          shift, and go to state 182
+    RP          shift, and go to state 165
     IDENTIFIER  shift, and go to state 43
     INTEGER     shift, and go to state 21
     CHAR        shift, and go to state 22
@@ -2750,7 +2504,7 @@ State 173
     STRING      shift, and go to state 24
 
     declaration       go to state 50
-    expr              go to state 183
+    expr              go to state 166
     condition_expr    go to state 52
     logical_or_expr   go to state 53
     logical_and_expr  go to state 54
@@ -2767,113 +2521,60 @@ State 173
     T                 go to state 62
 
 
-State 174
+State 162
 
    17 function_Definition: T IDENTIFIER LP declaration RP compound_Stmt .
 
     $default  reduce using rule 17 (function_Definition)
 
 
-State 175
+State 163
 
-   41 io_list: io_list COMMA expr .
+   35 io_list: io_list COMMA expr .
 
-    $default  reduce using rule 41 (io_list)
+    $default  reduce using rule 35 (io_list)
 
 
-State 176
+State 164
 
    22 if_else: IF LP expr RP compound_Stmt ELSE compound_Stmt .
 
     $default  reduce using rule 22 (if_else)
 
 
-State 177
-
-   29 iteration_Stmt: FOR LP SEMICOLON SEMICOLON expr RP compound_Stmt .
-
-    $default  reduce using rule 29 (iteration_Stmt)
-
-
-State 178
-
-   30 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON RP compound_Stmt .
-
-    $default  reduce using rule 30 (iteration_Stmt)
-
-
-State 179
-
-   27 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON expr RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 184
-
-
-State 180
-
-   28 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON RP compound_Stmt .
-
-    $default  reduce using rule 28 (iteration_Stmt)
-
-
-State 181
-
-   26 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON expr RP . compound_Stmt
-
-    LC  shift, and go to state 13
-
-    compound_Stmt  go to state 185
-
-
-State 182
+State 165
 
    25 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON RP . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 186
+    compound_Stmt  go to state 167
 
 
-State 183
+State 166
 
    24 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON expr . RP compound_Stmt
 
-    RP  shift, and go to state 187
+    RP  shift, and go to state 168
 
 
-State 184
-
-   27 iteration_Stmt: FOR LP SEMICOLON expr SEMICOLON expr RP compound_Stmt .
-
-    $default  reduce using rule 27 (iteration_Stmt)
-
-
-State 185
-
-   26 iteration_Stmt: FOR LP expr SEMICOLON SEMICOLON expr RP compound_Stmt .
-
-    $default  reduce using rule 26 (iteration_Stmt)
-
-
-State 186
+State 167
 
    25 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON RP compound_Stmt .
 
     $default  reduce using rule 25 (iteration_Stmt)
 
 
-State 187
+State 168
 
    24 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON expr RP . compound_Stmt
 
     LC  shift, and go to state 13
 
-    compound_Stmt  go to state 188
+    compound_Stmt  go to state 169
 
 
-State 188
+State 169
 
    24 iteration_Stmt: FOR LP expr SEMICOLON expr SEMICOLON expr RP compound_Stmt .
 

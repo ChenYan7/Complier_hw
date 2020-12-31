@@ -1128,6 +1128,12 @@ case 55:
 YY_RULE_SETUP
 #line 136 "src/main.lex"
 {
+    if(string(yytext)=="main"){
+        TreeNode* node = new TreeNode(lineno, NODE_VAR);
+        node->var_name = string(yytext);
+        yylval = node;
+        return IDENTIFIER;
+    }
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
     node->type=TYPE_VOID;//先定义为空类型
@@ -1136,7 +1142,7 @@ YY_RULE_SETUP
     Item* item=new Item;
     item->name=node->var_name;
     item->symbol_type=SYMBOL_VAR;
-    item->symbol_property=PROPERTY_DEF;
+    item->symbol_property=PROPERTY_REFE;
     item->tree_node=node;
     item->def_pos = node;//先假设为自己
     currentNode->section->section_table.push_back(item);
@@ -1146,28 +1152,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 153 "src/main.lex"
+#line 159 "src/main.lex"
 /* do nothing */
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 155 "src/main.lex"
+#line 161 "src/main.lex"
 {lineno++;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 157 "src/main.lex"
+#line 163 "src/main.lex"
 {
     cerr << "[line "<< lineno <<" ] unknown character:" << yytext << endl;
 }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 160 "src/main.lex"
+#line 166 "src/main.lex"
 ECHO;
 	YY_BREAK
-#line 1171 "src/main.lex.yy.cpp"
+#line 1177 "src/main.lex.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -2136,5 +2142,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 160 "src/main.lex"
+#line 166 "src/main.lex"
 

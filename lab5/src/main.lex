@@ -134,6 +134,12 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 }
 
 {IDENTIFIER} {
+    if(string(yytext)=="main"){
+        TreeNode* node = new TreeNode(lineno, NODE_VAR);
+        node->var_name = string(yytext);
+        yylval = node;
+        return IDENTIFIER;
+    }
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
     node->type=TYPE_VOID;//先定义为空类型
@@ -142,7 +148,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     Item* item=new Item;
     item->name=node->var_name;
     item->symbol_type=SYMBOL_VAR;
-    item->symbol_property=PROPERTY_DEF;
+    item->symbol_property=PROPERTY_REFE;
     item->tree_node=node;
     item->def_pos = node;//先假设为自己
     currentNode->section->section_table.push_back(item);
